@@ -23,7 +23,7 @@ const routes = [
     path: '/register',
     name: 'register',
     component: register
-  }
+  },
 ]
 
 const router = new VueRouter({
