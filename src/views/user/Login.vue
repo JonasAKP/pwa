@@ -1,18 +1,22 @@
 <template>
-  <v-form
+  <v-container>
+    <v-col cols="12">
+      <v-row class="text-center">
+    <v-form
     ref="form"
     v-model="valid"
     lazy-validation
   >
 
-
+    <v-col>
     <v-text-field
       v-model="email"
       :rules="emailRules"
       label="E-mail"
       required
     ></v-text-field>
-
+</v-col>
+<v-col>
      <v-text-field
       v-model="password"
       :counter="8"
@@ -20,7 +24,9 @@
       label="Password"
       required
     ></v-text-field>
-
+    </v-col>
+    <v-spacer></v-spacer>
+  <v-row>
     <v-btn
       :disabled="!valid"
       color="success"
@@ -37,7 +43,20 @@
     >
       Back
     </v-btn>
+<v-spacer></v-spacer>
+ <v-app>
+     <v-btn to="/Register"
+     class="mr-4"
+
+     >Register</v-btn>
+  </v-app>
+</v-row>
   </v-form>
+
+
+    </v-row>
+  </v-col>
+</v-container>
 </template>
 
 <script>

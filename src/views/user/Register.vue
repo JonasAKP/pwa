@@ -42,7 +42,7 @@
       label="Do you agree?"
       required
     ></v-checkbox>
-
+  <v-row>
     <v-btn
       :disabled="!valid"
       color="success"
@@ -52,13 +52,13 @@
       Submit
     </v-btn>
 
-    <v-btn
-      color="error"
-      class="mr-4"
-      @click="reset"
-    >
-      Back
-    </v-btn>
+<v-app>
+     <v-btn to="/Login"
+     class="mr-4"
+
+     >Back</v-btn>
+  </v-app>
+  </v-row>
   </v-form>
 </template>
 
