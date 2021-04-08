@@ -1,4 +1,8 @@
 <template>
+ <v-app>
+<v-container>
+  <v-col cols="12">
+  <v-card style="padding: 15px">
   <v-form
     ref="form"
     v-model="valid"
@@ -30,7 +34,7 @@
      <v-text-field
       v-model="cPassword"
       :counter="8"
-      :rules="passwordRules"
+      :rules="cPasswordRules"
       label="Confirm password"
       required
     ></v-text-field>
@@ -42,7 +46,8 @@
       label="Do you agree?"
       required
     ></v-checkbox>
-  <v-row>
+    
+  <v-row style="height: 60px; margin: 0px">
     <v-btn
       :disabled="!valid"
       color="success"
@@ -52,14 +57,18 @@
       Submit
     </v-btn>
 
-<v-app>
+
      <v-btn to="/Login"
      class="mr-4"
+    >Back</v-btn>
+  
 
-     >Back</v-btn>
-  </v-app>
   </v-row>
   </v-form>
+  </v-card>
+  </v-col>
+  </v-container>
+  </v-app>
 </template>
 
 <script>
@@ -83,18 +92,19 @@
         v => !!v || 'Password is required',
         v => (v && v.length <= 8) || 'Password must be less than 8 characters',
       ],
+         cPassword: '',
+      cPasswordRules: [
+        v => !!v || 'Password is required',
+        v => (v && v.length <= 8) || 'Password must be less than 8 characters',
+      ],
     }),
+    
 
     methods: {
       validate () {
         this.$refs.form.validate()
       },
-      reset () {
-       // this.$refs.form.reset()
-      },
-      resetValidation () {
-      //  this.$refs.form.resetValidation()
-      },
+
     },
   }
 </script>

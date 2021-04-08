@@ -1,7 +1,8 @@
 <template>
+ <v-app>
   <v-container>
     <v-col cols="12">
-      <v-row class="text-center">
+    <v-card style="padding: 15px">
     <v-form
     ref="form"
     v-model="valid"
@@ -26,7 +27,7 @@
     ></v-text-field>
     </v-col>
     <v-spacer></v-spacer>
-  <v-row>
+  <v-row style="height: 60px; margin: 11px">
     <v-btn
       :disabled="!valid"
       color="success"
@@ -36,27 +37,25 @@
       Login
     </v-btn>
 
-    <v-btn
+    <v-btn to="/Home"
       color="error"
       class="mr-4"
-      @click="reset"
     >
       Back
     </v-btn>
 <v-spacer></v-spacer>
- <v-app>
+
      <v-btn to="/Register"
      class="mr-4"
 
      >Register</v-btn>
-  </v-app>
+  
 </v-row>
   </v-form>
-
-
-    </v-row>
+  </v-card>
   </v-col>
 </v-container>
+</v-app>
 </template>
 
 <script>
@@ -80,12 +79,6 @@
     methods: {
       validate () {
         this.$refs.form.validate()
-      },
-      reset () {
-       // this.$refs.form.reset()
-      },
-      resetValidation () {
-      //  this.$refs.form.resetValidation()
       },
     },
   }
