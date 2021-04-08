@@ -29,7 +29,8 @@
       <router-link class="white--text" to="/">Home</router-link> |
       <router-link class="white--text" to="/about">About</router-link> |
       <router-link class="white--text" to="/Register">Register</router-link> |
-      <router-link class="white--text" to="/Login">Login</router-link>
+      <router-link class="white--text" to="/Login">Login</router-link> |
+      <router-link class="white--text" to="/Profile">Profile</router-link>
     </v-app-bar>
 
     <v-main>     
