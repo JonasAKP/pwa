@@ -1,26 +1,149 @@
 <template>
   <v-container>
-    <v-row style="margin: 20px 0 20px 0">
-      <v-icon large color="green darken-2">mdi-check</v-icon>Project Setup <v-spacer>
-      </v-spacer> <v-icon large>mdi-check</v-icon> Project Tasks <v-spacer>
-      </v-spacer> <v-icon large>mdi-pencil</v-icon> Management <v-spacer>
-      </v-spacer> <v-icon large>mdi-folder-plus</v-icon>Create
-    </v-row>
-    <v-divider></v-divider>
-    <v-row>
+<v-stepper v-model="e1">
+    <v-stepper-header>
+      <v-stepper-step
+        :complete="e1 > 1"
+        step="1"        
+      >
+        Project Setup
+      </v-stepper-step>
+
+      <v-divider></v-divider>
+
+      <v-stepper-step
+        :complete="e1 > 2"
+        step="2"
+      >
+        Project Tasks
+      </v-stepper-step>
+
+      <v-divider></v-divider>
+
+      <v-stepper-step
+        :complete="e1 > 3"
+        step="3"
+      >
+        Management
+      </v-stepper-step>
+
+      <v-divider></v-divider>
+
+      <v-stepper-step step="4">
+        Create
+      </v-stepper-step>
+    </v-stepper-header>
+
+    <v-stepper-items>
+      <v-stepper-content step="1">
+         <v-row>
       <project></project>
     </v-row>
-    <v-row style="margin: -25px">
+    <v-row style="">
       <projects></projects>
       <Schedules></Schedules>
       <Stakeholder></Stakeholder>
     </v-row>
 
-<v-btn> Continue </v-btn>
-<v-btn to="/"> Back </v-btn>
+        <v-btn
+          color="primary"
+          @click="e1 = 2"
+        >
+          Continue
+        </v-btn>
+
+        <v-btn text to="/">
+          Cancel
+        </v-btn>
+      </v-stepper-content>
+
+      <v-stepper-content step="2">
+        <v-card
+          class="mb-12"
+          color="grey lighten-1"
+          height="200px"
+        ></v-card>
+
+        <v-btn
+          color="primary"
+          @click="e1 = 3"
+        >
+          Continue
+        </v-btn>
+
+        <v-btn text to="/">
+          Cancel
+        </v-btn>
+
+        <v-btn
+          color="primary"
+          @click="e1 = 1"
+        >
+          Back
+        </v-btn>
+      </v-stepper-content>
+
+      <v-stepper-content step="3">
+        <v-card
+          class="mb-12"
+          color="grey lighten-1"
+          height="200px"
+        ></v-card>
+
+        <v-btn
+          color="primary"
+          @click="e1 = 4"
+        >
+          Continue
+        </v-btn>
+
+        <v-btn text to="/">
+          Cancel
+        </v-btn>
+
+        <v-btn
+          color="primary"
+          @click="e1 = 2"
+        >
+          Back
+        </v-btn>
+      </v-stepper-content>
+
+      <v-stepper-content step="4">
+        <v-card
+          class="mb-12"
+          color="grey lighten-1"
+          height="200px"
+        ></v-card>
+
+        <v-btn
+          color="primary"
+          @click="e1 = 1"
+        >
+          Continue
+        </v-btn>
+
+        <v-btn text to="/">
+          Cancel
+        </v-btn>
+
+        <v-btn
+          color="primary"
+          @click="e1 = 3"
+        >
+          Back
+        </v-btn>
+      </v-stepper-content>
+    </v-stepper-items>
+  </v-stepper>
 
 
   </v-container>
+
+
+
+
+
 </template>
 
 <script>
@@ -43,8 +166,10 @@ import Stakeholder from '../components/Stakeholder'
         Stakeholder
   },
 
-    data: () => ({
-          
-    }),
+    data () {
+      return {
+        e1: 1,
+      }
+    },
   }
 </script>
