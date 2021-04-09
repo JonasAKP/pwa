@@ -40,7 +40,7 @@
               :rules="cPasswordRules"
               label="Confirm password"
               required
-              @click:append="show1 = !show1"
+              @click:append="show2 = !show2"
             ></v-text-field>
 
             <v-checkbox
