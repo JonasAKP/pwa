@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import register from '../views/user/Register.vue'
 import login from '../views/user/Login.vue'
-import step1 from '../components/Step1.vue'
+import create from '../views/create.vue'
 
 Vue.use(VueRouter)
 
@@ -34,7 +34,7 @@ const routes = [
   {
     path: '/Create',
     name: 'Create',
-    component: step1
+    component: create
   },
 ]
 
