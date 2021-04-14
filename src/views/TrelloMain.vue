@@ -7,51 +7,43 @@
             </div>
           </div>
           <div class="row mt-3">
-              <v-card class="col-md-2">
-                  <div class="p-2 alert alert-secondary">
+              <v-card class="col-md-2 red lighten-4">
                 <h3>Backlog</h3>
                 <draggable class="list-group" :list="arrBacklog" group="tasks">
-                <div class="list-group-items" v-for="element in arrBacklog" :key="element.name">
+                <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrBacklog" :key="element.name">
                     {{element.name}}
-                </div>
+                </v-card>
                 </draggable>
-                </div>
             </v-card>
+            <v-spacer></v-spacer>
 
-
-             <v-card class="col-md-2">
-                  <div class="p-2 alert alert-primary">
+             <v-card class="col-md-2 yellow lighten-4">
                 <h3>In progress</h3>
                 <draggable class="list-group" :list="arrInProgress" group="tasks">
-                <div class="list-group-items" v-for="element in arrInProgress" :key="element.name">
+                <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrInProgress" :key="element.name">
                     {{element.name}}
-                </div>
+                </v-card>
                 </draggable>
-                </div>
             </v-card>
+            <v-spacer></v-spacer>
 
-
-             <v-card class="col-md-2">
-                  <div class="p-2 alert alert-secondary">
+             <v-card class="col-md-2 blue lighten-4">
                 <h3>Tested</h3>
                 <draggable class="list-group" :list="arrTested" group="tasks">
-                <div class="list-group-items" v-for="element in arrTested" :key="element.name">
+                <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrTested" :key="element.name">
                     {{element.name}}
-                </div>
+                </v-card>
                 </draggable>
-                </div>
             </v-card>
+            <v-spacer></v-spacer>
 
-
-             <v-card class="col-md-2">
-                  <div class="p-2 alert alert-secondary">
+             <v-card class="col-md-2 green lighten-4">
                 <h3>Done</h3>
                 <draggable class="list-group" :list="arrDone" group="tasks">
-                <div class="list-group-items" v-for="element in arrDone" :key="element.name">
+                <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrDone" :key="element.name">
                     {{element.name}}
-                </div>
+                </v-card>
                 </draggable>
-                </div>
             </v-card>
         </div>
     </div>
