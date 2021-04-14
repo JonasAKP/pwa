@@ -21,7 +21,7 @@
 
             <v-text-field
               v-model="password"
-              hint="At least 8 characters"
+              hint="At least 6 characters"
               counter
               :rules="passwordRules"
               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
@@ -35,7 +35,7 @@
               v-model="cPassword"
               :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
               :type="show2 ? 'text' : 'password'"
-              hint="At least 8 characters"
+              hint="At least 6 characters"
               counter
               :rules="cPasswordRules"
               label="Confirm password"
@@ -72,8 +72,10 @@
 <script>
 export default {
   data: () => ({
-    show1: false,
-    show2: false,
+    clicked: "not clicked",
+    //totalVuePackages: null,
+    show1: true,
+    show2: true,
     valid: true,
     name: "",
     nameRules: [
@@ -90,12 +92,14 @@ export default {
     password: "",
     passwordRules: [
       (v) => !!v || "Password is required",
-      (v) => (v && v.length <= 8) || "Password must be less than 8 characters",
+      (v) =>
+        (v && v.length >= 6) || "Password must be bigger than 8 characters",
     ],
     cPassword: "",
     cPasswordRules: [
       (v) => !!v || "Password is required",
-      (v) => (v && v.length <= 8) || "Password must be less than 8 characters",
+      (v) =>
+        (v && v.length >= 6) || "Password must be bigger than 8 characters",
     ],
   }),
 
@@ -104,6 +108,16 @@ export default {
       this.$refs.form.validate();
       this.registerUser();
     },
+
+   /*  getUser() {
+      fetch("http://localhost:4000/api/users")
+        .then((response) => response.json())
+        .then(
+          (data) => (
+            (this.totalVuePackages = data)
+          )
+        );
+    }, */
 
     registerUser() {
       /*  fetch("https://rest-api-pwa.herokuapp.com/api/users/register", {
@@ -116,17 +130,21 @@ export default {
       }) */
       const requestOptions = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          name: "test",
-          email: "test@ss.dk",
+          name: "wtfff",
+          email: "wtfff@ss.dk",
           password: "123456",
         }),
       };
-      fetch("http://localhost:4000/api/users/register/", requestOptions)
+      fetch(
+        "http://localhost:4000/api/users/register",
+        requestOptions
+      )
         // .then((response) => response.json())
-
-        .then((response) => {
+      .then((response) => {
           if (response.ok) {
             return response.json();
           } else {
