@@ -31,10 +31,10 @@
               >
                 Login
               </v-btn>
-
+             
               <v-btn to="/Home" color="error" class="mr-4"> Back </v-btn>
               <v-spacer></v-spacer>
-
+              {{ test }}
               <v-btn to="/Register" class="mr-4">Register</v-btn>
             </v-row>
           </v-form>
@@ -48,6 +48,8 @@
 export default {
   data: () => ({
     valid: true,
+
+    test: "",
     email: "",
     emailRules: [
       (v) => !!v || "E-mail is required",
@@ -64,44 +66,58 @@ export default {
 
   methods: {
     validate() {
-      this.$refs.form.validate();
+      if (this.$refs.form.validate()) {
+        this.loginUser();
+        //this.$router.push("/");
+      }
     },
-    
-    
-    registerUser() {
+
+    loginUser() {
       const requestOptions = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: this.name,
           email: this.email,
           password: this.password,
         }),
       };
       fetch(
-        // "http://localhost:4000/api/users/register",
-        "https://rest-api-pwa.herokuapp.com/api/users/register",
+        "https://rest-api-pwa.herokuapp.com/api/users/login",
         requestOptions
-      )
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            alert(
-              "Server returned " +
-                response.status +
-                " : " +
-                response.statusText,
-              (this.error = "Something went wrong")
-            );
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      ).then((response) =>
+        response
+          .json()
+          .then((data) => ({
+            data: data,
+            status: response.status,
+          }))
+          .then((response) => {
+            if (response.data) {
+              console.log(response.data);
+              console.log("token" + " " + response.data.token);
+
+            } else {
+              alert(
+                "Server returned " +
+                  response.status +
+                  " : " +
+                  response.statusText
+              );
+            }
+          })
+      );
     },
   },
 };
+
+//localStorage.setItem("user_token", JSON.stringify(response.data));
+// localStorage.setItem("user_email", this.email);
 </script>
+
+<style lang="scss" scoped>
+#errorMessage {
+  color: red;
+}
+</style>

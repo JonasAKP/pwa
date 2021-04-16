@@ -6,6 +6,7 @@
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-text-field
               v-model="name"
+              hint="At least 4 characters"
               :counter="10"
               :rules="nameRules"
               label="Name"
@@ -79,7 +80,7 @@ export default {
     name: "",
     nameRules: [
       (v) => !!v || "Name is required",
-      (v) => (v && v.length <= 10) || "Name must be less than 10 characters",
+      (v) => (v && v.length >= 4) || "Name must be more than 4 characters",
     ],
     email: "",
     emailRules: [
