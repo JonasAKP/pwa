@@ -1,5 +1,6 @@
 <template>
     <v-col>
+      <v-form>
         <h2>Project</h2>
 
         <v-col
@@ -10,6 +11,7 @@
             v-model="title"
             :rules="rules"
             label="Project Name"
+            required
           ></v-text-field>
         </v-col>
         <v-col
@@ -20,6 +22,7 @@
             v-model="title"
             :rules="rules"
             label="Project Description"
+            required
           ></v-text-field>
         </v-col>
         <v-col
@@ -30,8 +33,10 @@
             v-model="title"
             :rules="rules"
             label="Project ID (#Number)"
+            required
           ></v-text-field>
         </v-col>
+      </v-form>
     </v-col>
 </template>
 
@@ -39,5 +44,13 @@
 
 export default {
   name: 'Time',
+  data: () => ({
+      valid: true,
+      name: '',
+      rules: [
+        v => !!v || 'Is required',
+        v => (v && v.length >= 5) || 'Name must be above than 5 characters'
+        ]
+  })
 }
 </script>
