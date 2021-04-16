@@ -75,6 +75,8 @@
       
       checkbox: false,
 
+      name:"",
+      email: "",
       password: '',
       passwordRules: [
         v => !!v || 'Password is required',

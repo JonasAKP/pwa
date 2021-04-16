@@ -49,6 +49,7 @@
               label="Do you agree?"
               required
             ></v-checkbox>
+            <p id="errorMessage">{{ error }}</p>
 
             <v-row style="height: 60px; margin: 0px">
               <v-btn
@@ -59,7 +60,6 @@
               >
                 Submit
               </v-btn>
-
               <v-btn to="/Login" class="mr-4">Back</v-btn>
             </v-row>
           </v-form>
@@ -72,8 +72,7 @@
 <script>
 export default {
   data: () => ({
-    clicked: "not clicked",
-    //totalVuePackages: null,
+    error: "",
     show1: true,
     show2: true,
     valid: true,
@@ -105,11 +104,18 @@ export default {
 
   methods: {
     validate() {
-      this.$refs.form.validate();
-      this.registerUser();
+      if (this.$refs.form.validate()) {
+        if (this.password != this.cPassword) {
+          this.error = "Password does not match";
+        } else {
+          this.registerUser();
+          alert("User Registered")
+          this.$router.push('Login');
+        }
+      }
     },
 
-   /*  getUser() {
+    /*  getUser() {
       fetch("http://localhost:4000/api/users")
         .then((response) => response.json())
         .then(
@@ -120,36 +126,29 @@ export default {
     }, */
 
     registerUser() {
-      /*  fetch("https://rest-api-pwa.herokuapp.com/api/users/register", {
-        method: "POST",
-          body: {
-          name: "test",
-          email: "test@ss.dk",
-          password: "123456"
-        },
-      }) */
       const requestOptions = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: "wtfff",
-          email: "wtfff@ss.dk",
-          password: "123456",
+          name: this.name,
+          email: this.email,
+          password: this.password,
         }),
       };
       fetch(
-        "http://localhost:4000/api/users/register",
+        // "http://localhost:4000/api/users/register",
+        "https://rest-api-pwa.herokuapp.com/api/users/register",
         requestOptions
       )
-        // .then((response) => response.json())
-      .then((response) => {
+        .then((response) => {
           if (response.ok) {
             return response.json();
           } else {
             alert(
-              "Server returned " + response.status + " : " + response.statusText
+              "Server returned " + response.status + " : " + response.statusText,
+              this.error = "Something went wrong"
             );
           }
         })
@@ -160,3 +159,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+#errorMessage {
+  color: red;
+}
+</style>
