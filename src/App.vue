@@ -9,7 +9,7 @@
       <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/">Home</v-btn>
       <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/about">About</v-btn>
       <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/create">Create Project</v-btn>
-
+      <v-btn min-width="256px" class="white--text" elevation="0" outlined @click="logout()">Logout</v-btn>
     </v-navigation-drawer>
     <v-app-bar
       app
@@ -54,6 +54,13 @@ export default {
   },
 
   data: () => ({ drawer: null }),
-  
+  methods:
+  {
+    logout()
+    {
+      sessionStorage.clear();
+      this.$router.push('Login');
+    }
+  },
 };
 </script>

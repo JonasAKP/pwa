@@ -1,6 +1,5 @@
 <template>
-  <div class="home">
-  </div>
+  <div class="home"></div>
 </template>
 
 <script>
@@ -8,9 +7,18 @@
 //import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
     //HelloWorld
-  }
-}
+  },
+  mounted() {
+   if (
+      
+      sessionStorage.getItem("user_token") == null &&
+      sessionStorage.getItem("user_email") == null
+    ) {
+        this.$router.push('Login');
+    }
+  },
+};
 </script>
