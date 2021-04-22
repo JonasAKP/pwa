@@ -1,9 +1,22 @@
 <template>
   <v-app>
+    <v-navigation-drawer
+      v-model="drawer"
+      fixed
+      temporary
+      src="https://images.photowall.com/products/44478/sunny-sky.jpg?"
+    >
+      <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/">Home</v-btn>
+      <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/about">About</v-btn>
+      <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/create">Create Project</v-btn>
+
+    </v-navigation-drawer>
     <v-app-bar
       app
       color="primary"
       dark
+      src="https://wallpapermemory.com/uploads/245/sunrise-background-hd-1080p-284228.jpg"
+      elevate-on-scroll
     >
       <div class="d-flex align-center">
         <v-img
@@ -13,26 +26,16 @@
           src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
           transition="scale-transition"
           width="40"
+          @click.stop="drawer = !drawer"
         />
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
+        <v-toolbar-title>Trello Clone</v-toolbar-title>
       </div>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-    <v-spacer></v-spacer>
-      <router-link class="white--text" to="/">Home</router-link> |
-      <router-link class="white--text" to="/about">About</router-link> |
-      <router-link class="white--text" to="/Register">Register</router-link> |
-      <router-link class="white--text" to="/Login">Login</router-link> |
-      <router-link class="white--text" to="/Profile">Profile</router-link>
+      <v-spacer></v-spacer>
+      <v-btn elevation="0" outlined to="/Login">Login</v-btn>
     </v-app-bar>
-
     <v-main>     
       <router-view></router-view>
     </v-main>
@@ -46,11 +49,11 @@ export default {
   name: 'App',
 
   components: {
+  
   //  HelloWorld,
   },
 
-  data: () => ({
-    //
-  }),
+  data: () => ({ drawer: null }),
+  
 };
 </script>
