@@ -74,14 +74,14 @@
 
                 <v-col cols="12" sm="6">
                   <v-text-field
-                    v-model="start"
+                    v-model="startDate"
                     :rules="rules"
                     label="Start date"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
                   <v-text-field
-                    v-model="end"
+                    v-model="endDate"
                     :rules="rules"
                     label="End date"
                   ></v-text-field>
@@ -135,6 +135,7 @@
             </v-row>
 
             <v-btn
+              :disabled="!valid"
               color="primary"
               @click="
                 e1 = 2;
@@ -154,9 +155,7 @@
             <v-col cols="12" md="6">
               <v-row>
                 <v-text-field :rules="rules"></v-text-field>
-                <v-btn style="margin: 15px" color="primary">
-                  Add
-                </v-btn>
+                <v-btn style="margin: 15px" color="primary"> Add </v-btn>
               </v-row>
             </v-col>
             <v-col>
@@ -228,8 +227,20 @@
 <script>
 export default {
   name: "Create",
-  components: {},
   data: () => ({
+    radios: null, // fix later
+    project: null,
+    projects: null,
+    id: null,
+    startDate: 0, // fix later
+    endDate: 0, // fix later
+    hour: 0, // fix later
+    stake: null,
+    members: null,
+    leader: null,
+    p_members: null,
+    selected: null,
+    //rules start here
     valid: true,
     name: "Rules",
     rules: [
