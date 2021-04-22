@@ -74,8 +74,8 @@
 export default {
   data: () => ({
     error: "",
-    show1: true,
-    show2: true,
+    show1: false,
+    show2: false,
     valid: true,
     name: "",
     nameRules: [

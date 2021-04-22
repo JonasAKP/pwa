@@ -31,10 +31,10 @@
               >
                 Login
               </v-btn>
-             
+
               <v-btn to="/Home" color="error" class="mr-4"> Back </v-btn>
               <v-spacer></v-spacer>
-              {{ test }}
+              <!-- {{ test }} -->
               <v-btn to="/Register" class="mr-4">Register</v-btn>
             </v-row>
           </v-form>
@@ -49,7 +49,7 @@ export default {
   data: () => ({
     valid: true,
 
-    test: "",
+   // test: "",
     email: "",
     emailRules: [
       (v) => !!v || "E-mail is required",
@@ -68,7 +68,17 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         this.loginUser();
-        //this.$router.push("/");
+        if(sessionStorage.getItem("user_token") && sessionStorage.getItem("user_email") )
+        {
+         // console.log(sessionStorage.getItem("user_token") + sessionStorage.getItem("user_email"))
+          alert(sessionStorage.getItem("user_email") + " Has been logged in")
+          this.$router.push("/");
+        }
+        else
+        {
+          alert("Something went wrong");
+        }
+       
       }
     },
 
@@ -95,9 +105,14 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
-              console.log(response.data);
-              console.log("token" + " " + response.data.token);
+              sessionStorage.setItem(
+                "user_token",
+                JSON.stringify(response.data.data.token)
+              );
+              sessionStorage.setItem("user_email", this.email);
 
+             // this.test = "token: " + sessionStorage.getItem("user_token") + "\n" + "user :" + sessionStorage.getItem("user_email") ;
+              
             } else {
               alert(
                 "Server returned " +
@@ -111,9 +126,6 @@ export default {
     },
   },
 };
-
-//localStorage.setItem("user_token", JSON.stringify(response.data));
-// localStorage.setItem("user_email", this.email);
 </script>
 
 <style lang="scss" scoped>
