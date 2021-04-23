@@ -12,6 +12,46 @@
                 <draggable class="list-group" :list="arrBacklog" group="tasks">
                 <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrBacklog" :key="element.name">
                     {{element.name}}
+                    <div class="text-center">
+    <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          color="green lighten-2"
+          dark
+          v-bind="attrs"
+          v-on="on"
+        >
+          Edit
+        </v-btn>
+      </template>
+
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+        Task Description
+        </v-card-title>
+
+        <v-card-text>
+         
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="dialog = false"
+          >
+            I accept
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
                 </v-card>
                 </draggable>
             </v-card>
@@ -57,6 +97,7 @@ import draggable from "vuedraggable";
         },
         data(){
             return{
+            dialog: false,
             newTask: "",
             arrBacklog: [
                 {name: "Project name"},
