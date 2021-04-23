@@ -6,10 +6,34 @@
       temporary
       src="https://images.photowall.com/products/44478/sunny-sky.jpg?"
     >
-      <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/">Home</v-btn>
-      <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/about">About</v-btn>
-      <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/create">Create Project</v-btn>
-      <v-btn min-width="256px" class="white--text" elevation="0" outlined @click="logout()">Logout</v-btn>
+      <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/"
+        >Home</v-btn
+      >
+      <v-btn
+        min-width="256px"
+        class="white--text"
+        elevation="0"
+        outlined
+        to="/about"
+        >About</v-btn
+      >
+      <v-btn
+        min-width="256px"
+        class="white--text"
+        elevation="0"
+        outlined
+        to="/create"
+        >Create Project</v-btn
+      >
+      <v-btn
+        min-width="256px"
+        class="white--text"
+        elevation="0"
+        outlined
+        @click="logout()"
+        v-if="userEmail && userToken"
+        >Logout</v-btn
+      >
     </v-navigation-drawer>
     <v-app-bar
       app
@@ -34,33 +58,34 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-spacer></v-spacer>
-      <v-btn elevation="0" outlined to="/Login">Login</v-btn>
+      <v-btn elevation="0" outlined to="/Login" v-if="!userEmail && !userToken">Login</v-btn>
     </v-app-bar>
-    <v-main>     
+    <v-main>
       <router-view></router-view>
     </v-main>
   </v-app>
 </template>
 
 <script>
-//import HelloWorld from './components/HelloWorld';
+
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
-  
-  //  HelloWorld,
+   
   },
 
-  data: () => ({ drawer: null }),
-  methods:
-  {
-    logout()
-    {
+  data: () => ({ drawer: null, userEmail: null, userToken: null }),
+  methods: {
+    logout() {
       sessionStorage.clear();
-      this.$router.push('Login');
-    }
+      this.$router.push("Login");
+    },
+  },
+  created() {
+    this.userEmail = sessionStorage.getItem("user_email");
+    this.userToken = sessionStorage.getItem("user_token");
   },
 };
 </script>

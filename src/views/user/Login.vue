@@ -15,9 +15,11 @@
             <v-col>
               <v-text-field
                 v-model="password"
-                :counter="8"
+                counter
                 :rules="passwordRules"
                 label="Password"
+                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="show1 ? 'text' : 'password'"
                 required
               ></v-text-field>
             </v-col>
@@ -32,7 +34,7 @@
                 Login
               </v-btn>
 
-              <v-btn to="/Home" color="error" class="mr-4"> Back </v-btn>
+              <v-btn to="/" color="error" class="mr-4"> Back </v-btn>
               <v-spacer></v-spacer>
               <!-- {{ test }} -->
               <v-btn to="/Register" class="mr-4">Register</v-btn>
@@ -48,8 +50,8 @@
 export default {
   data: () => ({
     valid: true,
-
-   // test: "",
+    show1: false,
+    // test: "",
     email: "",
     emailRules: [
       (v) => !!v || "E-mail is required",
@@ -68,17 +70,16 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         this.loginUser();
-        if(sessionStorage.getItem("user_token") && sessionStorage.getItem("user_email") )
-        {
-         // console.log(sessionStorage.getItem("user_token") + sessionStorage.getItem("user_email"))
-          alert(sessionStorage.getItem("user_email") + " Has been logged in")
+        if (
+          sessionStorage.getItem("user_token") &&
+          sessionStorage.getItem("user_email")
+        ) {
+          // console.log(sessionStorage.getItem("user_token") + sessionStorage.getItem("user_email"))
+          alert(sessionStorage.getItem("user_email") + " Has been logged in");
           this.$router.push("/");
-        }
-        else
-        {
+        } else {
           alert("Something went wrong");
         }
-       
       }
     },
 
@@ -107,12 +108,11 @@ export default {
             if (response.data) {
               sessionStorage.setItem(
                 "user_token",
-                JSON.stringify(response.data.data.token)
+                JSON.stringify(response.data.token)
               );
               sessionStorage.setItem("user_email", this.email);
 
-             // this.test = "token: " + sessionStorage.getItem("user_token") + "\n" + "user :" + sessionStorage.getItem("user_email") ;
-              
+              // this.test = "token: " + sessionStorage.getItem("user_token") + "\n" + "user :" + sessionStorage.getItem("user_email") ;
             } else {
               alert(
                 "Server returned " +
