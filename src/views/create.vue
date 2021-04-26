@@ -126,16 +126,31 @@
                 </v-col>
                 <v-col cols="12" sm="6">
                   <v-text-field
-                    v-model="p_members"
-                    :rules="rules"
-                    label="Project Members"
+                    v-model="p_member[0]"
+                    label="Project Member 1"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="p_member[1]"
+                    label="Project Member 2"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="p_member[2]"
+                    label="Project Member 3"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="p_member[3]"
+                    label="Project Member 4"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="p_member[4]"
+                    label="Project Member 5"
                   ></v-text-field>
                 </v-col>
               </v-col>
             </v-row>
 
             <v-btn
-              :disabled="!valid"
+              :disabled="valid"
               color="primary"
               @click="
                 e1 = 2;
@@ -152,10 +167,39 @@
         <v-stepper-content step="2">
           <!-- Content here -->
           <v-row>
-            <v-col cols="12" md="6">
-              <v-row>
-                <v-text-field :rules="rules"></v-text-field>
-                <v-btn style="margin: 15px" color="primary"> Add </v-btn>
+            <v-col cols="12" md="5">
+              <v-row style="margin: 0">
+                <v-text-field
+                  :rules="rules"
+                  v-model="newTask"
+                  placeholder="Enter Task"
+                  v-on:keyup.enter="add"
+                ></v-text-field>
+                <v-btn style="margin: 15px" color="primary" @click="add">
+                  Add
+                </v-btn>
+              </v-row>
+              <v-row style="margin 0">
+                <v-card class="col-md-12" flat>
+                  <h3>Tasks</h3>
+                  <v-card
+                    :rules="arrCheck"
+                    style="margin: 10px; padding: 5px"
+                    class="list-group-items"
+                    v-for="element in arrBacklog"
+                    :key="element.name"
+                  >
+                    {{ element.name }}
+                    <v-btn
+                      :right="true"
+                      :absolute="true"
+                      height="25px"
+                      text
+                      @click="removeA(arrBacklog, element.name)"
+                      >X</v-btn
+                    >
+                  </v-card>
+                </v-card>
               </v-row>
             </v-col>
             <v-col>
@@ -201,7 +245,15 @@
         </v-stepper-content>
 
         <v-stepper-content step="3">
-          <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
+          <v-row>
+            <v-card flat class="col-sm-12" style="margin: 20px">
+              <ul>
+                <li v-for="member in p_members" :key='member'>
+                  {{ member.name }}                  
+                </li>
+              </ul>
+            </v-card>
+          </v-row>
 
           <v-btn color="primary" @click="e1 = 4"> Continue </v-btn>
 
@@ -232,14 +284,20 @@ export default {
     project: null,
     projects: null,
     id: null,
-    startDate: 0, // fix later
-    endDate: 0, // fix later
-    hour: 0, // fix later
+    startDate: null, // fix later
+    endDate: null, // fix later
+    hour: null, // fix later
     stake: null,
     members: null,
     leader: null,
-    p_members: null,
+    p_member: [],
+    p_members: [{
+      name: '', hours: ''
+    }],
+    newTask: null,
     selected: null,
+    //array for keeping data
+    arrBacklog: [],
     //rules start here
     valid: true,
     name: "Rules",
@@ -251,11 +309,34 @@ export default {
       (v) => !!v || "Is required",
       (v) => (v && v.length <= 3) || "Must be below 3 digits",
     ],
+    arrCheck: [(arrBacklog) => arrBacklog && arrBacklog.length >= 0],
     e1: 1,
   }),
   methods: {
     validate() {
       this.$refs.form.validate();
+    },
+    add() {
+      if (this.newTask) {
+        this.arrBacklog.push({ name: this.newTask });
+        this.newTask = "";
+      }
+    },
+    removeA(arr) {
+      var what,
+        a = arguments,
+        L = a.length,
+        ax;
+      while (L > 1 && arr.length) {
+        what = a[--L];
+        while ((ax = arr.indexOf(what)) !== -1) {
+          arr.splice(ax, 1);
+        }
+      }
+      return arr;
+    },
+    changed: function () {
+      console.log(this.p_members);
     },
   },
 };
