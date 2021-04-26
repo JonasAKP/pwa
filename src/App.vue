@@ -31,7 +31,7 @@
         elevation="0"
         outlined
         @click="logout()"
-        v-if="userEmail && userToken"
+        v-if="userID && userToken"
         >Logout</v-btn
       >
     </v-navigation-drawer>
@@ -84,7 +84,7 @@ export default {
     },
   },
   created() {
-    this.userEmail = sessionStorage.getItem("user_email");
+    this.userID = sessionStorage.getItem("user_id");
     this.userToken = sessionStorage.getItem("user_token");
   },
 };

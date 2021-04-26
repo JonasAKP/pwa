@@ -17,10 +17,11 @@
                 v-model="password"
                 counter
                 :rules="passwordRules"
-                label="Password"
                 :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="show1 ? 'text' : 'password'"
+                label="Password"
                 required
+                @click:append="show1 = !show1"
               ></v-text-field>
             </v-col>
             <v-spacer></v-spacer>
@@ -70,16 +71,6 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         this.loginUser();
-        if (
-          sessionStorage.getItem("user_token") &&
-          sessionStorage.getItem("user_email")
-        ) {
-          // console.log(sessionStorage.getItem("user_token") + sessionStorage.getItem("user_email"))
-          alert(sessionStorage.getItem("user_email") + " Has been logged in");
-          this.$router.push("/");
-        } else {
-          alert("Something went wrong");
-        }
       }
     },
 
@@ -108,10 +99,19 @@ export default {
             if (response.data) {
               sessionStorage.setItem(
                 "user_token",
-                JSON.stringify(response.data.token)
+                response.data.token
+                // console.log("getToken: " + response.data.token)
               );
-              sessionStorage.setItem("user_email", this.email);
-
+              sessionStorage.setItem("user_id", response.data.userId);
+              const token = sessionStorage.getItem("user_token");
+              console.log(token);
+              const userID = sessionStorage.getItem("user_id");
+              if (token && userID) {
+                alert(this.email + " Has been logged in");
+                this.$router.push("/");
+              } else {
+                alert("Something went wrong");
+              }
               // this.test = "token: " + sessionStorage.getItem("user_token") + "\n" + "user :" + sessionStorage.getItem("user_email") ;
             } else {
               alert(

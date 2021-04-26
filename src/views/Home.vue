@@ -18,7 +18,7 @@
       <v-col md="8">
         <v-card style="margin-top: 15px; padding: 5px">
           <v-row>
-            <v-col cols="2" sm="2" md="3">
+            <v-col cols="12" sm="2" md="3">
               <div>
                 <v-card-title>Project One</v-card-title>
                 <v-card-subtitle>
@@ -76,6 +76,22 @@
                     <v-card-title>Budget</v-card-title>
                     <v-card-subtitle>200 hours</v-card-subtitle>
                   </v-col>
+                  <v-col md="3">
+                    <v-card-title>Total time spend</v-card-title>
+                    <v-card-subtitle>160 hours</v-card-subtitle>
+                    <v-card-title>Total time left</v-card-title>
+                    <v-card-subtitle>40 hours</v-card-subtitle>
+                  </v-col>
+                  <v-col md="2">
+                    <div class="align-mid">
+                      <v-card-title>tech</v-card-title>
+                      <v-card-subtitle>
+                        <p class="mb-0">VueJS</p>
+                        <p class="mb-0">Vuetify</p>
+                        <p class="mb-0">REST API</p>
+                      </v-card-subtitle>
+                    </div>
+                  </v-col>
                 </v-row>
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -88,22 +104,64 @@
 
 <script>
 // @ is an alias to /src
-
+//import JWT from 'jsonwebtoken';
 export default {
   name: "Home",
+  data: () => ({
+    projectIDs: [],
+    token: null,
+    userID: null,
+    
+  }),
   components: {},
   created() {
+    this.token = sessionStorage.getItem("user_token");
+    this.userID = sessionStorage.getItem("user_id");
     if (
-      sessionStorage.getItem("user_token") == null &&
-      sessionStorage.getItem("user_email") == null
+      this.token == null &&
+      this.userID == null
     ) {
       this.$router.push("Login");
     }
+    this.getUser();
+  },
+
+  methods: {
+    getUser() {
+      console.log(this.token);
+      fetch("https://rest-api-pwa.herokuapp.com/api/users/" + this.userID, {
+        method: "GET",
+        headers: { 'auth-token': this.token},
+      }).then((response) =>
+        response
+          .json()
+          .then((data) => ({
+            data: data,
+            status: response.status,
+          }))
+          .then((response) => {
+            if (response.data) {
+              console.log(response.data);
+            } else {
+              alert(
+                "Server returned " +
+                  response.status +
+                  " : " +
+                  response.statusText
+              );
+            }
+          })
+      );
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.align-mid {
+  padding-left: 31%;
+}
+
 .center {
   display: flex;
   justify-content: center;
