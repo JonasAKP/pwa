@@ -14,7 +14,7 @@
                     {{element.name}}
                     <div class="text-center">
     <v-dialog
-      v-model="dialog"
+      v-model="showModal"
       width="500"
     >
       <template v-slot:activator="{ on, attrs }">
@@ -24,7 +24,7 @@
           v-bind="attrs"
           v-on="on"
         >
-          Edit
+        Edit
         </v-btn>
       </template>
 
@@ -34,7 +34,6 @@
         </v-card-title>
 
         <v-card-text>
-         
         </v-card-text>
 
         <v-divider></v-divider>
@@ -44,7 +43,7 @@
           <v-btn
             color="primary"
             text
-            @click="dialog = false"
+            @click="showModal = false"
           >
             I accept
           </v-btn>
@@ -60,9 +59,20 @@
              <v-card class="col-md-2 yellow lighten-4">
                 <h3>In progress</h3>
                 <draggable class="list-group" :list="arrInProgress" group="tasks">
-                <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrInProgress" :key="element.name">
+
+ <div v-for="item in arrBacklog" :key="item.id">
+            <div v-show="item.toggleIndividual">
+              Name: {{ item.name }}
+             <button @click="toggleInd(item)">close</button>
+            </div>
+            <div v-if="!item.toggleIndividual">
+              <button @click="toggleInd(item)">open</button>
+            </div>
+          </div>
+
+             <!--   <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrInProgress" :key="element.name">
                     {{element.name}}
-                </v-card>
+                </v-card> -->
                 </draggable>
             </v-card>
             <v-spacer></v-spacer>
@@ -86,6 +96,20 @@
                 </draggable>
             </v-card>
         </div>
+
+        <div>
+          <h1>open close</h1>
+          
+          <div v-for="item in arrBacklog" :key="item.id">
+            <div v-show="item.toggleIndividual">
+              Name: {{ item.name }}
+             <button @click="toggleInd(item)">close</button>
+            </div>
+            <div v-if="!item.toggleIndividual">
+              <button @click="toggleInd(item)">open</button>
+            </div>
+          </div>
+        </div>
     </div>
 </template>
 
@@ -98,12 +122,13 @@ import draggable from "vuedraggable";
         data(){
             return{
             dialog: false,
+            showModal:false,
             newTask: "",
             arrBacklog: [
-                {name: "Project name"},
-                {name: "new task"},
-                {name: "styling page"},
-                {name: "doing stuff"},
+                {name: "Project name", toggleIndividual: false},
+                {name: "New task", toggleIndividual: false},
+                {name: "Styling page", toggleIndividual: false},
+                {name: "Doing stuff", toggleIndividual: false},
             ],
             arrInProgress:[],
             arrTested:[],
@@ -111,6 +136,9 @@ import draggable from "vuedraggable";
             }
         },
         methods: {
+           toggleInd(item){
+          item.toggleIndividual = !item.toggleIndividual;
+        },
             add() {
                 if(this.newTask){
                     this.arrBacklog.push({name:this.newTask});
