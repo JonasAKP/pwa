@@ -5,6 +5,7 @@
       text
       color="yellow darken-2"
       style="padding: 0; margin-bottom: 0; margin-top: 15px"
+      to="/create"
     >
       <v-icon
         color="yellow darken-2"
@@ -15,87 +16,63 @@
       New Project
     </v-btn>
     <v-row>
-      <v-col md="8">
-        <v-card style="margin-top: 15px; padding: 5px">
+      <v-col md="7">
+        <div v-for="project in this.user.projects" :key="project">
+          <ProjectFront :projectID="project" :token="token"></ProjectFront>
+        </div>
+      </v-col>
+      <v-col md="5">
+        <v-card style="margin-top: 15px; padding: 20px">
           <v-row>
-            <v-col cols="12" sm="2" md="3">
-              <div>
-                <v-card-title>Project One</v-card-title>
-                <v-card-subtitle>
-                  These palettes provide additional ways to use your primary and
-                  secondary colors.</v-card-subtitle
+            <v-col md="6">
+              <v-row style="padding-top: 10px">
+                <div style="padding-left: 15px">
+                  <v-card-title id="title1" style="padding: 0"
+                    >Utilities</v-card-title
+                  >
+                  <v-text-field
+                    class="searchField"
+                    append-icon="mdi-magnify"
+                  ></v-text-field>
+                </div>
+              </v-row>
+              <v-row>
+                <v-radio-group
+                  style="padding-left: 15px"
+                  v-model="radio"
+                  label="Sort By"
                 >
-              </div>
+                  <v-radio value="status" label="status"></v-radio>
+                  <v-radio value="date" label="date"></v-radio>
+                  <v-radio value="name" label="name"></v-radio>
+                </v-radio-group>
+              </v-row>
             </v-col>
-            <v-col md="3">
-              <div>
-                <v-card-title>Members:</v-card-title>
-                <v-card-subtitle>bob,søren, mads</v-card-subtitle>
-              </div>
+            <v-col md="4">
+              <v-row>
+                <div>
+                  <v-card-title> {{ user.name }} ddddddd</v-card-title>
+                  <v-card-subtitle>
+                    {{ user.email }}
+                  </v-card-subtitle>
+                </div>
+              </v-row>
+
+              <v-row>
+                <div class="mt-9 ml-5">
+                  <p>Weekly Hours: {{ user.weekHours }}</p>
+                  <v-progress-linear
+                    :value="user.weekHours"
+                  ></v-progress-linear>
+                </div>
+              </v-row>
             </v-col>
             <v-col md="2">
-              <div>
-                <v-card-title>Due</v-card-title>
-                <v-card-subtitle>23-04-2021</v-card-subtitle>
-              </div>
-            </v-col>
-            <v-col md="2" class="center">
-              <v-chip class="deep-purple accent-4 white--text" large
-                >ONGOING</v-chip
-              >
-            </v-col>
-
-            <v-col md="2" class="center">
-              <v-btn text><v-icon x-large>mdi-folder-search</v-icon></v-btn>
-            </v-col>
+              <v-btn to="/profile" text rounded color="yellow darken-2"  x-large
+                ><v-icon>mdi-pencil </v-icon>
+              </v-btn></v-col
+            >
           </v-row>
-          <v-expansion-panels flat>
-            <v-expansion-panel>
-              <v-expansion-panel-header></v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-row>
-                  <v-col md="3">
-                    <div style="display: flex">
-                      <v-checkbox value disabled></v-checkbox>
-                      <p style="margin-top: 18px">task one</p>
-                    </div>
-                    <div style="display: flex">
-                      <v-checkbox value disabled></v-checkbox>
-                      <p style="margin-top: 18px">task two</p>
-                    </div>
-                    <div style="display: flex">
-                      <v-checkbox
-                        input-value="true"
-                        value
-                        disabled
-                      ></v-checkbox>
-                      <p style="margin-top: 18px">task three</p>
-                    </div>
-                  </v-col>
-                  <v-col md="2">
-                    <v-card-title>Budget</v-card-title>
-                    <v-card-subtitle>200 hours</v-card-subtitle>
-                  </v-col>
-                  <v-col md="3">
-                    <v-card-title>Total time spend</v-card-title>
-                    <v-card-subtitle>160 hours</v-card-subtitle>
-                    <v-card-title>Total time left</v-card-title>
-                    <v-card-subtitle>40 hours</v-card-subtitle>
-                  </v-col>
-                  <v-col md="2">
-                    <div class="align-mid">
-                      <v-card-title>tech</v-card-title>
-                      <v-card-subtitle>
-                        <p class="mb-0">VueJS</p>
-                        <p class="mb-0">Vuetify</p>
-                        <p class="mb-0">REST API</p>
-                      </v-card-subtitle>
-                    </div>
-                  </v-col>
-                </v-row>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
         </v-card>
       </v-col>
     </v-row>
@@ -104,34 +81,32 @@
 
 <script>
 // @ is an alias to /src
-//import JWT from 'jsonwebtoken';
+import ProjectFront from "../components/ProjectFront";
 export default {
   name: "Home",
   data: () => ({
-    projectIDs: [],
     token: null,
     userID: null,
-    
+    user: null,
   }),
-  components: {},
+  components: {
+    ProjectFront,
+  },
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
-    if (
-      this.token == null &&
-      this.userID == null
-    ) {
+    if (this.token == null && this.userID == null) {
       this.$router.push("Login");
+    } else {
+      this.getUser();
     }
-    this.getUser();
   },
 
   methods: {
     getUser() {
-      console.log(this.token);
       fetch("https://rest-api-pwa.herokuapp.com/api/users/" + this.userID, {
         method: "GET",
-        headers: { 'auth-token': this.token},
+        headers: { "auth-token": this.token },
       }).then((response) =>
         response
           .json()
@@ -141,7 +116,7 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
-              console.log(response.data);
+              this.user = response.data;
             } else {
               alert(
                 "Server returned " +
@@ -158,6 +133,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#title1 {
+  color: lightgrey;
+}
+
+.searchField {
+  border: black solid 1px;
+  border-radius: 10px;
+  padding: 0 5px;
+}
+
 .align-mid {
   padding-left: 31%;
 }

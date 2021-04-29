@@ -66,6 +66,13 @@ export default {
       (v) => (v && v.length <= 8) || "password is incorrect, please try again",
     ],
   }),
+  created() {
+    this.token = sessionStorage.getItem("user_token");
+    this.userID = sessionStorage.getItem("user_id");
+    if (this.token != null && this.userID != null) {
+      this.$router.push("/");
+    } 
+  },
 
   methods: {
     validate() {
@@ -104,7 +111,6 @@ export default {
               );
               sessionStorage.setItem("user_id", response.data.userId);
               const token = sessionStorage.getItem("user_token");
-              console.log(token);
               const userID = sessionStorage.getItem("user_id");
               if (token && userID) {
                 alert(this.email + " Has been logged in");
