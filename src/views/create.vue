@@ -125,26 +125,12 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="p_member[0]"
-                    label="Project Member 1"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="p_member[1]"
-                    label="Project Member 2"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="p_member[2]"
-                    label="Project Member 3"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="p_member[3]"
-                    label="Project Member 4"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="p_member[4]"
-                    label="Project Member 5"
-                  ></v-text-field>
+                  <v-text-field v-for="(member, index) in p_members" :key="index"
+                  v-model="member.name"
+                   :label="member.label"
+                     >
+                  </v-text-field>
+                 
                 </v-col>
               </v-col>
             </v-row>
@@ -248,7 +234,7 @@
           <v-row>
             <v-card flat class="col-sm-12" style="margin: 20px">
               <ul>
-                <li v-for="member in p_members" :key='member'>
+                <li v-for="member in p_members" :key="member">
                   {{ member.name }}                  
                 </li>
               </ul>
@@ -290,10 +276,33 @@ export default {
     stake: null,
     members: null,
     leader: null,
-    p_member: [],
-    p_members: [{
-      name: '', hours: ''
-    }],
+    p_members: {
+      member1: {
+        label: "Member 1",
+        name: '',
+        hours: ''
+      },
+      member2: {
+        label: "Member 2",
+        name: '',
+        hours: ''
+      },
+      member3: {
+        label: "Member 3",
+        name: '',
+        hours: ''
+      },
+      member4: {
+        label: "Member 4",
+        name: '',
+        hours: ''
+      },
+      member5: {
+        label: "Member 5",
+        name: '',
+        hours: ''
+      },
+    },
     newTask: null,
     selected: null,
     //array for keeping data
@@ -312,6 +321,9 @@ export default {
     arrCheck: [(arrBacklog) => arrBacklog && arrBacklog.length >= 0],
     e1: 1,
   }),
+  mounted() {
+  console.log("test", this.p_members)
+  },
   methods: {
     validate() {
       this.$refs.form.validate();
