@@ -11,11 +11,14 @@
                 <h3>Backlog</h3>
                 <draggable class="list-group" :list="arrBacklog" group="tasks">
                 <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrBacklog" :key="element.name">
-                    {{element.name}}
-                    <div class="text-center">
-                       <v-btn small text >
+                  
+                    <div>
+                        {{element.name}}
+                       <div class="text-end">
+                         <v-btn >
                     <v-icon @click="editItem(element)" @click.stop="dialog = true">edit</v-icon> <!-- 2: edit onclick modal -->
                   </v-btn>
+                  </div>
             </div>
               </v-card>
                 </draggable>
@@ -27,7 +30,15 @@
                 <draggable class="list-group" :list="arrInProgress" group="tasks">
                   
                   <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrInProgress" :key="element.name">
-                 {{element.name}}
+                     <div>
+                        {{element.name}}
+                       <div class="text-end">
+                         <v-btn >
+                    <v-icon @click="editItem(element)" @click.stop="dialog = true">edit</v-icon> <!-- 2: edit onclick modal -->
+                  </v-btn>
+                  </div>
+            </div>
+
                 </v-card> 
                 </draggable>
             </v-card>
@@ -37,7 +48,15 @@
                 <h3>Tested</h3>
                 <draggable class="list-group" :list="arrTested" group="tasks">
                 <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrTested" :key="element.name">
-                    {{element.name}}
+                  
+                   <div>
+                        {{element.name}}
+                       <div class="text-end">
+                         <v-btn >
+                    <v-icon @click="editItem(element)" @click.stop="dialog = true">edit</v-icon> <!-- 2: edit onclick modal -->
+                  </v-btn>
+                  </div>
+            </div>
                 </v-card>
                 </draggable>
             </v-card>
@@ -47,7 +66,15 @@
                 <h3>Done</h3>
                 <draggable class="list-group" :list="arrDone" group="tasks">
                 <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrDone" :key="element.name">
-                    {{element.name}}
+                    
+                   <div>
+                        {{element.name}}
+                       <div class="text-end">
+                         <v-btn >
+                    <v-icon @click="editItem(element)" @click.stop="dialog = true">edit</v-icon> <!-- 2: edit onclick modal -->
+                  </v-btn>
+                  </div>
+            </div>
                 </v-card>
                 </draggable>
             </v-card>
