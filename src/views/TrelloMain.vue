@@ -13,45 +13,11 @@
                 <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrBacklog" :key="element.name">
                     {{element.name}}
                     <div class="text-center">
-    <v-dialog
-      v-model="showModal"
-      width="500"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="green lighten-2"
-          dark
-          v-bind="attrs"
-          v-on="on"
-        >
-        Edit
-        </v-btn>
-      </template>
-
-      <v-card>
-        <v-card-title class="headline grey lighten-2">
-        Task Description
-        </v-card-title>
-
-        <v-card-text>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="showModal = false"
-          >
-            I accept
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
-                </v-card>
+                       <v-btn small text >
+                    <v-icon @click="editItem(element)" @click.stop="dialog = true">edit</v-icon> <!-- 2: edit onclick modal -->
+                  </v-btn>
+            </div>
+              </v-card>
                 </draggable>
             </v-card>
             <v-spacer></v-spacer>
@@ -59,20 +25,10 @@
              <v-card class="col-md-2 yellow lighten-4">
                 <h3>In progress</h3>
                 <draggable class="list-group" :list="arrInProgress" group="tasks">
-
- <div v-for="item in arrBacklog" :key="item.id">
-            <div v-show="item.toggleIndividual">
-              Name: {{ item.name }}
-             <button @click="toggleInd(item)">close</button>
-            </div>
-            <div v-if="!item.toggleIndividual">
-              <button @click="toggleInd(item)">open</button>
-            </div>
-          </div>
-
-             <!--   <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrInProgress" :key="element.name">
-                    {{element.name}}
-                </v-card> -->
+                  
+                  <v-card style="margin: 10px; padding: 5px" class="list-group-items" v-for="element in arrInProgress" :key="element.name">
+                 {{element.name}}
+                </v-card> 
                 </draggable>
             </v-card>
             <v-spacer></v-spacer>
@@ -97,7 +53,7 @@
             </v-card>
         </div>
 
-        <div>
+<!--         <div>
           <h1>open close</h1>
           
           <div v-for="item in arrBacklog" :key="item.id">
@@ -109,7 +65,33 @@
               <button @click="toggleInd(item)">open</button>
             </div>
           </div>
-        </div>
+        </div> -->
+         <div>
+      <v-dialog
+        v-model="dialog"
+        max-width="400"
+      >
+        <v-card>
+        <div class="pa-5">
+            <v-text-field autofocus v-model="item.name"></v-text-field>
+            <v-text-field autofocus v-model="item.description"></v-text-field>
+            <v-btn
+              color="complete"
+              @click="updateItem()"
+              @click.stop="dialog = false"
+            >
+             Edit
+            </v-btn>
+            <v-btn
+              color="incomplete"
+              @click="dialog = false"  
+            >  <!-- 4: Edit stuff: add onclick to close it -->
+              Cancel
+            </v-btn>
+          </div>
+        </v-card>
+      </v-dialog>
+          </div>
     </div>
 </template>
 
@@ -121,8 +103,13 @@ import draggable from "vuedraggable";
         },
         data(){
             return{
-            dialog: false,
-            showModal:false,
+            
+        updatedSuccess: false,
+        updatedItem: 'Tasks has been updated',
+        dialog: false,  // 3: edit - modal box
+        activeEditItem: null, // 5 storing id to use with edit
+        item: [] // 4 : Edit add to store for edit data//
+        ,
             newTask: "",
             arrBacklog: [
                 {name: "Project name", toggleIndividual: false},
@@ -136,6 +123,11 @@ import draggable from "vuedraggable";
             }
         },
         methods: {
+          editItem(item) {
+        this.item = item;
+        this.activeEditItem = item.id;
+        },
+        updateItem() {console.log("edit later")},
            toggleInd(item){
           item.toggleIndividual = !item.toggleIndividual;
         },
