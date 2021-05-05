@@ -15,8 +15,8 @@
                     <div>
                         {{element.name}}
                        <div class="text-end">
-                         <v-btn >
-                    <v-icon @click="editItem(element)" @click.stop="dialog = true">edit</v-icon> <!-- 2: edit onclick modal -->
+                         <v-btn @click="editItem(element)" @click.stop="dialog = true">
+                    Edit<!-- 2: edit onclick modal -->
                   </v-btn>
                   </div>
             </div>
@@ -33,8 +33,8 @@
                      <div>
                         {{element.name}}
                        <div class="text-end">
-                         <v-btn >
-                    <v-icon @click="editItem(element)" @click.stop="dialog = true">edit</v-icon> <!-- 2: edit onclick modal -->
+                         <v-btn @click="editItem(element)" @click.stop="dialog = true">
+                    Edit <!-- 2: edit onclick modal -->
                   </v-btn>
                   </div>
             </div>
@@ -52,8 +52,8 @@
                    <div>
                         {{element.name}}
                        <div class="text-end">
-                         <v-btn >
-                    <v-icon @click="editItem(element)" @click.stop="dialog = true">edit</v-icon> <!-- 2: edit onclick modal -->
+                         <v-btn @click="editItem(element)" @click.stop="dialog = true">
+                  Edit <!-- 2: edit onclick modal -->
                   </v-btn>
                   </div>
             </div>
@@ -70,8 +70,8 @@
                    <div>
                         {{element.name}}
                        <div class="text-end">
-                         <v-btn >
-                    <v-icon @click="editItem(element)" @click.stop="dialog = true">edit</v-icon> <!-- 2: edit onclick modal -->
+                         <v-btn  @click="editItem(element)" @click.stop="dialog = true">
+                   Edit <!-- 2: edit onclick modal -->
                   </v-btn>
                   </div>
             </div>
@@ -105,14 +105,16 @@
             <v-text-field v-model="item.duration" label="Allocated hours"></v-text-field>
             <v-text-field v-model="item.assigned" label="Assigned member"></v-text-field>
             <v-btn
-              color="complete"
+              style="margin: 5px"
+              color="green lighten-2"
               @click="updateItem()"
               @click.stop="dialog = false"
             >
              Edit
             </v-btn>
             <v-btn
-              color="incomplete"
+              style="margin: 5px"
+              color="red lighten-1"
               @click="dialog = false"  
             >  <!-- 4: Edit stuff: add onclick to close it -->
               Cancel
