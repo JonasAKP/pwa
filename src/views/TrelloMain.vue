@@ -100,8 +100,10 @@
       >
         <v-card>
         <div class="pa-5">
-            <v-text-field autofocus v-model="item.name"></v-text-field>
-            <v-text-field autofocus v-model="item.description"></v-text-field>
+            <v-text-field v-model="item.name" label="Name"></v-text-field>
+            <v-text-field v-model="item.description" label="Description"></v-text-field>
+            <v-text-field v-model="item.duration" label="Allocated hours"></v-text-field>
+            <v-text-field v-model="item.assigned" label="Assigned member"></v-text-field>
             <v-btn
               color="complete"
               @click="updateItem()"
