@@ -60,6 +60,7 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
+                      type="number"
                       v-model="id"
                       :rules="rules"
                       label="Project ID (#Number)"
@@ -88,6 +89,7 @@
                 </v-col>
                 <v-col cols="12" sm="6">
                   <v-text-field
+                    type="number"
                     v-model="hour"
                     :rules="hours"
                     label="Total hours allocated"
@@ -125,12 +127,13 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-text-field v-for="(member, index) in p_members" :key="index"
-                  v-model="member.name"
-                   :label="member.label"
-                     >
+                  <v-text-field
+                    v-for="(member, index) in p_members"
+                    :key="index"
+                    v-model="member.name"
+                    :label="member.label"
+                  >
                   </v-text-field>
-                 
                 </v-col>
               </v-col>
             </v-row>
@@ -232,13 +235,96 @@
 
         <v-stepper-content step="3">
           <v-row>
-            <v-card flat class="col-sm-12" style="margin: 20px">
-              <ul>
-                <li v-for="member in p_members" :key="member">
-                  {{ member.name }}                  
-                </li>
-              </ul>
-            </v-card>
+            <v-col class="col-sm-6">
+              <v-row>
+                <v-col class="col-sm-4">
+                  <h4>Project Members</h4>
+                  <v-radio-group>
+                    <v-radio
+                      :value="member.name"
+                      v-for="member in p_members"
+                      :key="member.name"
+                      :label="member.name"
+                    >
+                    </v-radio>
+                  </v-radio-group>
+                </v-col>
+
+                <v-col class="col-sm-4">
+                  <v-text-field
+                    label="Tasks"
+                    style="padding: 0px"
+                    class="my-10"
+                  ></v-text-field>
+                  <v-text-field
+                    style="padding: 0px"
+                    type="number"
+                    label="Hours"
+                    :rules="hours"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-simple-table>
+                  <template v-slot:default>
+                    <thead>
+                      <tr>
+                        <th class="text-left">Name</th>
+                        <th class="text-left">Tasks</th>
+                        <th class="text-left">Hours</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="member in p_members" :key="member.name">
+                        <td>{{ member.name }}</td>
+                        <td>{{ member.role }}</td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+              </v-row>
+            </v-col>
+
+            <v-col class="col-sm-6">
+              <v-row>
+                <v-col cols="12" sm="5">
+                  <h4>Cloud location</h4>
+                  <v-text-field
+                    v-model="cloud"
+                    :rules="rules"
+                    label="Upload location"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="5" offset="2">
+                  <h4>Github Repository</h4>
+                  <v-text-field
+                    v-model="Github"
+                    :rules="rules"
+                    label="Github location"
+                  ></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    :rules="rules"
+                    v-model="newTask"
+                    placeholder="Technologies"
+                    v-on:keyup.enter="add"
+                  ></v-text-field>
+                  <v-btn style="margin: 15px" color="primary" @click="addTech">
+                    Add
+                  </v-btn>
+                  <v-card
+                    :rules="techCheck"
+                    style="margin: 10px; padding: 5px"
+                    class="list-group-items"
+                    v-for="element in techsUsed"
+                    :key="element.name"
+                  >
+                    {{ element.name }}
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-col>
           </v-row>
 
           <v-btn color="primary" @click="e1 = 4"> Continue </v-btn>
@@ -279,34 +365,42 @@ export default {
     p_members: {
       member1: {
         label: "Member 1",
-        name: '',
-        hours: ''
+        role: "",
+        name: "",
+        hours: "",
       },
       member2: {
         label: "Member 2",
-        name: '',
-        hours: ''
+        role: "",
+        name: "",
+        hours: "",
       },
       member3: {
         label: "Member 3",
-        name: '',
-        hours: ''
+        role: "",
+        name: "",
+        hours: "",
       },
       member4: {
         label: "Member 4",
-        name: '',
-        hours: ''
+        role: "",
+        name: "",
+        hours: "",
       },
       member5: {
         label: "Member 5",
-        name: '',
-        hours: ''
+        role: "",
+        name: "",
+        hours: "",
       },
     },
     newTask: null,
     selected: null,
+    cloud: null,
+    github: null,
     //array for keeping data
     arrBacklog: [],
+    techsUsed: [],
     //rules start here
     valid: true,
     name: "Rules",
@@ -319,11 +413,9 @@ export default {
       (v) => (v && v.length <= 3) || "Must be below 3 digits",
     ],
     arrCheck: [(arrBacklog) => arrBacklog && arrBacklog.length >= 0],
+    techCheck: [(techsUsed) => techsUsed && techsUsed.length >= 0],
     e1: 1,
   }),
-  mounted() {
-  console.log("test", this.p_members)
-  },
   methods: {
     validate() {
       this.$refs.form.validate();
@@ -331,6 +423,12 @@ export default {
     add() {
       if (this.newTask) {
         this.arrBacklog.push({ name: this.newTask });
+        this.newTask = "";
+      }
+    },
+    addTech() {
+      if (this.newTask) {
+        this.techsUsed.push({ name: this.newTask });
         this.newTask = "";
       }
     },
