@@ -71,7 +71,7 @@ export default {
     this.userID = sessionStorage.getItem("user_id");
     if (this.token != null && this.userID != null) {
       this.$router.push("/");
-    } 
+    }
   },
 
   methods: {
@@ -104,19 +104,24 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
-              sessionStorage.setItem(
-                "user_token",
-                response.data.token
-                // console.log("getToken: " + response.data.token)
-              );
-              sessionStorage.setItem("user_id", response.data.userId);
-              const token = sessionStorage.getItem("user_token");
-              const userID = sessionStorage.getItem("user_id");
-              if (token && userID) {
-                alert(this.email + " Has been logged in");
-                this.$router.push("/");
+              console.log(response.data.token);
+              if (!response.data.token) {
+                alert("Email and Password does not match");
               } else {
-                alert("Something went wrong");
+                sessionStorage.setItem(
+                  "user_token",
+                  response.data.token
+                  // console.log("getToken: " + response.data.token)
+                );
+                sessionStorage.setItem("user_id", response.data.userId);
+                const token = sessionStorage.getItem("user_token");
+                const userID = sessionStorage.getItem("user_id");
+                if (token != null && userID != null) {
+                  alert(this.email + " Has been logged in");
+                  this.$router.push("/");
+                } else {
+                  alert("Something went wrong");
+                }
               }
               // this.test = "token: " + sessionStorage.getItem("user_token") + "\n" + "user :" + sessionStorage.getItem("user_email") ;
             } else {

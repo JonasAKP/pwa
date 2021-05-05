@@ -17,7 +17,7 @@
     </v-btn>
     <v-row>
       <v-col md="7">
-        <div v-for="project in this.user.projects" :key="project">
+        <div  v-for="project in this.user.projects" :key="project">
           <ProjectFront :projectID="project" :token="token"></ProjectFront>
         </div>
       </v-col>
@@ -88,6 +88,7 @@ export default {
     token: null,
     userID: null,
     user: null,
+    radio:null,
   }),
   components: {
     ProjectFront,
