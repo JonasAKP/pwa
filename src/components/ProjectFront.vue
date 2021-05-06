@@ -3,8 +3,8 @@
     <v-row>
       <v-col cols="12" sm="2" md="2">
         <div>
-          <v-card-title>{{ name }}</v-card-title>
-          <v-card-subtitle> {{ description }}</v-card-subtitle>
+          <v-card-title>{{ project.name }}</v-card-title>
+          <v-card-subtitle> {{ project.description }}</v-card-subtitle>
         </div>
       </v-col>
       <v-col md="3">
@@ -16,17 +16,19 @@
       <v-col md="3">
         <div>
           <v-card-title>Due</v-card-title>
-          <v-card-subtitle>{{ timeEnd }}</v-card-subtitle>
+          <v-card-subtitle>{{ project.timeEnd }}</v-card-subtitle>
         </div>
       </v-col>
       <v-col md="2" class="center">
         <v-chip class="deep-purple accent-4 white--text" large>{{
-          status
+          project.status
         }}</v-chip>
       </v-col>
 
       <v-col md="2" class="center">
-        <v-btn text><v-icon x-large>mdi-folder-search</v-icon></v-btn>
+        <v-btn text @click="setProject()"
+          ><v-icon x-large>mdi-folder-search</v-icon></v-btn
+        >
       </v-col>
     </v-row>
     <v-expansion-panels flat>
@@ -35,24 +37,32 @@
         <v-expansion-panel-content>
           <v-row>
             <v-col md="4">
-              <div style="display: flex" v-for="task in tasksObj" :key="task.id">
-                <v-checkbox   v-if="task.status == 'Done'" input-value="true" value disabled></v-checkbox>
+              <div
+                style="display: flex"
+                v-for="task in tasksObj"
+                :key="task.id"
+              >
+                <v-checkbox
+                  v-if="task.status == 'Done'"
+                  input-value="true"
+                  value
+                  disabled
+                ></v-checkbox>
                 <v-checkbox v-else value disabled></v-checkbox>
 
-                <p style="margin-top: 18px"> {{ task.name }}</p>
+                <p style="margin-top: 18px">{{ task.name }}</p>
               </div>
             </v-col>
             <v-col md="4">
               <v-card-title>Hours Allocated</v-card-title>
-              <v-card-subtitle>{{ duration }}</v-card-subtitle>
+              <v-card-subtitle>{{ project.duration }}</v-card-subtitle>
             </v-col>
             <v-col md="4">
               <v-card-title>Start Date</v-card-title>
-              <v-card-subtitle>{{ timeBegin }}</v-card-subtitle>
+              <v-card-subtitle>{{ project.timeBegin }}</v-card-subtitle>
               <v-card-title>End Date</v-card-title>
-              <v-card-subtitle>{{ timeEnd }}</v-card-subtitle>
+              <v-card-subtitle>{{ project.timeEnd }}</v-card-subtitle>
             </v-col>
-           
           </v-row>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -63,7 +73,7 @@
   <script>
 export default {
   data: () => ({
-    type: null,
+    /*  type: null,
     name: null,
     description: null,
     duration: null,
@@ -71,7 +81,8 @@ export default {
     leader: null,
     timeBegin: null,
     timeEnd: null,
-    status: null,
+    status: null, */
+    project: null,
 
     date: null,
     taskIDs: [],
@@ -87,6 +98,13 @@ export default {
     this.getProject();
   },
   methods: {
+    setProject() {
+      sessionStorage.setItem(
+        "project",
+        JSON.stringify(this.project)
+      );
+      this.$router.push("/TrelloMain");
+    },
     getProject() {
       fetch(
         "https://rest-api-pwa.herokuapp.com/api/projects/" + this.projectID,
@@ -103,7 +121,9 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
-              this.type = response.data.type;
+              this.project = response.data;
+
+              /*   this.type = response.data.type;
               this.name = response.data.name;
               this.description = response.data.description;
               this.duration = response.data.duration;
@@ -112,7 +132,7 @@ export default {
               this.timeBegin = response.data.timeBegin;
               this.timeEnd = response.data.timeEnd;
               this.status = response.data.status;
-
+*/
               this.date = response.data.date;
 
               this.taskIDs = response.data.tasks;
