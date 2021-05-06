@@ -6,41 +6,35 @@
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-text-field
               v-model="name"
-              hint="At least 4 characters"
-              :counter="10"
-              :rules="nameRules"
               label="Name"
-              required
+              disabled
             ></v-text-field>
 
             <v-text-field
               v-model="email"
-              :rules="emailRules"
               label="E-mail"
-              required
+              disabled
             ></v-text-field>
 
             <v-text-field
               v-model="password"
-              hint="At least 6 characters"
               counter
               :rules="passwordRules"
+              label="New Password"
+              required
               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
               :type="show1 ? 'text' : 'password'"
-              label="Password"
-              required
               @click:append="show1 = !show1"
             ></v-text-field>
 
             <v-text-field
               v-model="cPassword"
-              :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="show2 ? 'text' : 'password'"
-              hint="At least 6 characters"
-              counter
+              :counter="8"
               :rules="cPasswordRules"
               label="Confirm password"
               required
+              :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="show2 ? 'text' : 'password'"
               @click:append="show2 = !show2"
             ></v-text-field>
 
@@ -50,7 +44,6 @@
               label="Do you agree?"
               required
             ></v-checkbox>
-            <p id="errorMessage">{{ error }}</p>
 
             <v-row style="height: 60px; margin: 0px">
               <v-btn
@@ -61,7 +54,8 @@
               >
                 Submit
               </v-btn>
-              <v-btn to="/Login" class="mr-4">Back</v-btn>
+
+              <v-btn to="/" class="mr-4">Back</v-btn>
             </v-row>
           </v-form>
         </v-card>
@@ -73,78 +67,92 @@
 <script>
 export default {
   data: () => ({
-    error: "",
+    valid: true,
+    user: null,
+    checkbox: false,
     show1: false,
     show2: false,
-    valid: true,
+    token: null,
+    userID: null,
     name: "",
-    nameRules: [
-      (v) => !!v || "Name is required",
-      (v) => (v && v.length >= 4) || "Name must be more than 4 characters",
-    ],
     email: "",
-    emailRules: [
-      (v) => !!v || "E-mail is required",
-      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
-    ],
-    checkbox: false,
-
     password: "",
     passwordRules: [
       (v) => !!v || "Password is required",
-      (v) =>
-        (v && v.length >= 6) || "Password must be bigger than 8 characters",
+      (v) => (v && v.length >= 6) || "Password must be more than 6 characters",
     ],
     cPassword: "",
     cPasswordRules: [
       (v) => !!v || "Password is required",
-      (v) =>
-        (v && v.length >= 6) || "Password must be bigger than 8 characters",
+      (v) => (v && v.length >= 6) || "Password must be more than 6 characters",
     ],
   }),
+  created() {
+    this.token = sessionStorage.getItem("user_token");
+    this.userID = sessionStorage.getItem("user_id");
+    if (this.token == null && this.userID == null) {
+      this.$router.push("Login");
+    } else {
+      this.getUser();
+    }
+  },
 
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
         if (this.password != this.cPassword) {
-          this.error = "Password does not match";
+          alert("Password and confirm passwod does not match");
         } else {
-          this.registerUser();
-          alert("User Registered")
-          this.$router.push('Login');
+          this.updatePassword();
         }
       }
     },
 
-    /*  getUser() {
-      fetch("http://localhost:4000/api/users")
-        .then((response) => response.json())
-        .then(
-          (data) => (
-            (this.totalVuePackages = data)
-          )
-        );
-    }, */
+    getUser() {
+      fetch("https://rest-api-pwa.herokuapp.com/api/users/" + this.userID, {
+        method: "GET",
+        headers: { "auth-token": this.token },
+      }).then((response) =>
+        response
+          .json()
+          .then((data) => ({
+            data: data,
+            status: response.status,
+          }))
+          .then((response) => {
+            if (response.data) {
+              this.name = response.data.name;
+              this.email = response.data.email;
+            } else {
+              alert(
+                "Server returned " +
+                  response.status +
+                  " : " +
+                  response.statusText
+              );
+            }
+          })
+      );
+    },
 
-    registerUser() {
+    updatePassword() {
       const requestOptions = {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
+           "auth-token": this.token
         },
-        body: JSON.stringify({
-          name: this.name,
-          email: this.email,
+        body: JSON.stringify({ 
           password: this.password,
         }),
       };
       fetch(
-        // "http://localhost:4000/api/users/register",
-        "https://rest-api-pwa.herokuapp.com/api/users/register",
+        "https://rest-api-pwa.herokuapp.com/api/users/" + this.userID,
         requestOptions
-      )
-        .then((response) => {
+      ).then((response) => {
           if (response.ok) {
+            alert("Password changed");
+             this.$router.push("/");
             return response.json();
           } else {
             alert(
@@ -160,9 +168,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-#errorMessage {
-  color: red;
-}
-</style>

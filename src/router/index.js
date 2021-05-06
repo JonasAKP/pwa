@@ -5,6 +5,8 @@ import register from '../views/user/Register.vue'
 import login from '../views/user/Login.vue'
 import step1 from '../components/Step1.vue'
 import TrelloMain from '../views/TrelloMain.vue'
+import profile from '../views/user/Profile.vue'
+
 
 Vue.use(VueRouter)
 
@@ -31,6 +33,11 @@ const routes = [
     path: '/Login',
     name: 'Login',
     component: login
+  },
+  {
+    path: '/Profile',
+    name: 'Profile',
+    component: profile
   },
   {
     path: '/Create',
