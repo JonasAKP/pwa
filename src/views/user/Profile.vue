@@ -4,10 +4,14 @@
       <v-col cols="12">
         <v-card style="padding: 15px">
           <v-form ref="form" v-model="valid" lazy-validation>
-            <v-text-field v-model="name" label="Name" disabled></v-text-field>
+            <v-text-field
+              v-model="user.name"
+              label="Name"
+              disabled
+            ></v-text-field>
 
             <v-text-field
-              v-model="email"
+              v-model="user.email"
               label="E-mail"
               disabled
             ></v-text-field>
@@ -18,14 +22,20 @@
               :rules="passwordRules"
               label="New Password"
               required
+              :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="show1 ? 'text' : 'password'"
+              @click:append="show1 = !show1"
             ></v-text-field>
 
             <v-text-field
               v-model="cPassword"
-              counter
+              :counter="8"
               :rules="cPasswordRules"
               label="Confirm password"
               required
+              :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="show2 ? 'text' : 'password'"
+              @click:append="show2 = !show2"
             ></v-text-field>
 
             <v-checkbox
@@ -45,7 +55,7 @@
                 Submit
               </v-btn>
 
-              <v-btn to="/Login" class="mr-4">Back</v-btn>
+              <v-btn to="/" class="mr-4">Back</v-btn>
             </v-row>
           </v-form>
         </v-card>
@@ -58,24 +68,25 @@
 export default {
   data: () => ({
     valid: true,
+    user: null,
     checkbox: false,
-    userID: null,
-    name: null,
-    email: null,
+    show1: false,
+    show2: false,
     token: null,
-    password: null,
+    userID:null,
+    name: "",
+    email: "",
+    password: "",
     passwordRules: [
       (v) => !!v || "Password is required",
       (v) => (v && v.length >= 6) || "Password must be more than 6 characters",
     ],
-
     cPassword: "",
     cPasswordRules: [
-      (v) => !!v || "Confirm Password is required",
+      (v) => !!v || "Password is required",
       (v) => (v && v.length >= 6) || "Password must be more than 6 characters",
     ],
   }),
-
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
