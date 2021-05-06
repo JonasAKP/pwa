@@ -5,13 +5,13 @@
         <v-card style="padding: 15px">
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-text-field
-              v-model="user.name"
+              v-model="name"
               label="Name"
               disabled
             ></v-text-field>
 
             <v-text-field
-              v-model="user.email"
+              v-model="email"
               label="E-mail"
               disabled
             ></v-text-field>
@@ -73,7 +73,7 @@ export default {
     show1: false,
     show2: false,
     token: null,
-    userID:null,
+    userID: null,
     name: "",
     email: "",
     password: "",
@@ -121,7 +121,7 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
-              this.name = response.data.email;
+              this.name = response.data.name;
               this.email = response.data.email;
             } else {
               alert(

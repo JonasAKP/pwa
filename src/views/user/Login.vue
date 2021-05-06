@@ -119,7 +119,7 @@ export default {
                 if (token != null && userID != null) {
                   alert(this.email + " Has been logged in");
                   this.$router.push("/");
-                } else {
+                } else {  
                   alert("Something went wrong");
                 }
               }

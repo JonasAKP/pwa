@@ -51,7 +51,7 @@
             <v-col md="4">
               <v-row>
                 <div>
-                  <v-card-title> {{ user.name }} ddddddd</v-card-title>
+                  <v-card-title> {{ user.name }} </v-card-title>
                   <v-card-subtitle>
                     {{ user.email }}
                   </v-card-subtitle>
@@ -76,6 +76,22 @@
         </v-card>
       </v-col>
     </v-row>
+     <v-snackbar
+      v-model="snackbar"
+    >
+      {{ text }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
