@@ -136,7 +136,7 @@ export default {
         }),
       };
       fetch(
-        "http://localhost:4000/api/users/" + this.userID,
+        "https://rest-api-pwa.herokuapp.com/api/users/" + this.userID,
         requestOptions
       ).then((response) => {
           if (response.ok) {
