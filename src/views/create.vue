@@ -26,7 +26,7 @@
       <v-stepper-items>
         <v-stepper-content step="1">
           <v-form v-model="valid">
-            <v-row>
+            <!-- <v-row>
               <v-col style="margin: 20px 0 20px 0">
                 <h2>Project type:</h2>
                 <v-radio-group v-model="radios" mandatory>
@@ -35,7 +35,7 @@
                   <v-radio label="Empty Template" value="radio-3"></v-radio>
                 </v-radio-group>
               </v-col>
-            </v-row>
+            </v-row> -->
 
             <v-row style="">
               <v-col>
@@ -55,15 +55,6 @@
                       v-model="projects"
                       :rules="rules"
                       label="Project Description"
-                      required
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6">
-                    <v-text-field
-                      type="number"
-                      v-model="id"
-                      :rules="rules"
-                      label="Project ID (#Number)"
                       required
                     ></v-text-field>
                   </v-col>
@@ -105,14 +96,6 @@
                     v-model="stake"
                     :rules="rules"
                     label="Stakeholder/partners"
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="members"
-                    :rules="rules"
-                    label="Project Members"
                   ></v-text-field>
                 </v-col>
 
@@ -175,8 +158,8 @@
                     :rules="arrCheck"
                     style="margin: 10px; padding: 5px"
                     class="list-group-items"
-                    v-for="element in arrBacklog"
-                    :key="element.name"
+                    v-for="(element, index) in arrBacklog"
+                    :key="index"
                   >
                     {{ element.name }}
                     <v-btn
@@ -184,7 +167,7 @@
                       :absolute="true"
                       height="25px"
                       text
-                      @click="removeA(arrBacklog, element.name)"
+                      @click="removeA(index)"
                       >X</v-btn
                     >
                   </v-card>
@@ -192,7 +175,7 @@
               </v-row>
             </v-col>
             <v-col>
-              <v-checkbox
+              <!-- <v-checkbox
                 v-model="selected"
                 label="Report"
                 value="Report"
@@ -221,12 +204,12 @@
                 v-model="selected"
                 label="Jacob"
                 value="Jacob"
-              ></v-checkbox>
+              ></v-checkbox> -->
             </v-col>
           </v-row>
           <!-- Content ends here -->
 
-          <v-btn color="primary" @click="e1 = 3"> Continue </v-btn>
+          <v-btn color="primary" @click="(e1 = 3)"> Continue </v-btn>
 
           <v-btn text to="/"> Cancel </v-btn>
 
@@ -265,7 +248,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-simple-table>
+                <v-simple-table style="text-align: center; margin: 30px">
                   <template v-slot:default>
                     <thead>
                       <tr>
@@ -278,6 +261,12 @@
                       <tr v-for="member in p_members" :key="member.name">
                         <td>{{ member.name }}</td>
                         <td>{{ member.role }}</td>
+                        <td>{{ member.hours }}</td>
+                      </tr>
+                      <tr>
+                        <td>Total hours</td>
+                        <td></td>
+                        <td>{{ totalHours }}</td>
                       </tr>
                     </tbody>
                   </template>
@@ -295,24 +284,31 @@
                     label="Upload location"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="5" offset="2">
+                <v-col cols="12" sm="5" offset="md-2">
                   <h4>Github Repository</h4>
                   <v-text-field
-                    v-model="Github"
+                    v-model="github"
                     :rules="rules"
                     label="Github location"
                   ></v-text-field>
                 </v-col>
-                <v-col>
-                  <v-text-field
-                    :rules="rules"
-                    v-model="newTask"
-                    placeholder="Technologies"
-                    v-on:keyup.enter="add"
-                  ></v-text-field>
-                  <v-btn style="margin: 15px" color="primary" @click="addTech">
-                    Add
-                  </v-btn>
+                <v-col cols="12" sm="5">
+                  <v-row>
+                    <v-text-field
+                      style="margin: 0 0 0 10px"
+                      :rules="rules"
+                      v-model="newTask"
+                      placeholder="Technologies"
+                      v-on:keyup.enter="add"
+                    ></v-text-field>
+                    <v-btn
+                      style="margin: 15px"
+                      color="primary"
+                      @click="addTech"
+                    >
+                      Add
+                    </v-btn>
+                  </v-row>
                   <v-card
                     :rules="techCheck"
                     style="margin: 10px; padding: 5px"
@@ -335,7 +331,12 @@
         </v-stepper-content>
 
         <v-stepper-content step="4">
-          <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
+          <v-card height="300px" flat>
+            <h2 style="text-align: center">Project id</h2>
+            <div style="text-align: center">
+              <v-btn color="success">Create</v-btn>
+            </div>
+          </v-card>
 
           <v-btn color="primary" @click="e1 = 1"> Continue </v-btn>
 
@@ -365,39 +366,40 @@ export default {
     p_members: {
       member1: {
         label: "Member 1",
-        role: "",
-        name: "",
-        hours: "",
+        role: "QA",
+        name: "John",
+        hours: 30,
       },
       member2: {
         label: "Member 2",
-        role: "",
-        name: "",
-        hours: "",
+        role: "Lead Dev",
+        name: "Silvia",
+        hours: 40,
       },
       member3: {
         label: "Member 3",
-        role: "",
-        name: "",
-        hours: "",
+        role: "Developer",
+        name: "Jane",
+        hours: 60,
       },
       member4: {
         label: "Member 4",
-        role: "",
-        name: "",
-        hours: "",
+        role: "QC",
+        name: "Smith",
+        hours: 10,
       },
       member5: {
         label: "Member 5",
-        role: "",
-        name: "",
-        hours: "",
+        role: "Debugger",
+        name: "Brian",
+        hours: 5,
       },
     },
     newTask: null,
     selected: null,
     cloud: null,
     github: null,
+    totalHours: 0,
     //array for keeping data
     arrBacklog: [],
     techsUsed: [],
@@ -432,22 +434,15 @@ export default {
         this.newTask = "";
       }
     },
-    removeA(arr) {
-      var what,
-        a = arguments,
-        L = a.length,
-        ax;
-      while (L > 1 && arr.length) {
-        what = a[--L];
-        while ((ax = arr.indexOf(what)) !== -1) {
-          arr.splice(ax, 1);
-        }
-      }
-      return arr;
+    removeA(index) {
+      this.arrBacklog.splice(index, 1);
     },
-    changed: function () {
-      console.log(this.p_members);
-    },
+    // calc() {
+    //   this.p_members.forEach((element) => {
+    //     this.totalHours =+ element.hours;
+    //     console.log(this.totalHours);
+    //   });
+    // },
   },
 };
 </script>
