@@ -2,13 +2,54 @@
   <div class="container mt-5">
     <div class="row">
       <div class="col form-inline" style="padding-left: 0px">
-        <input
-          style="border: black solid 1px"
-          v-model="newTask"
-          placeholder="Enter Task"
-          v-on:keyup.enter="add"
-        />
-        <v-btn style="height: 28px; margin: 10px" color="primary" @click="add"
+        <v-dialog
+          v-model="dialog2"
+          max-width="500px"
+          transition="dialog-transition"
+        >
+          <v-card>
+            <div class="pa-5">
+              <v-text-field v-model="item1.name" label="Name"></v-text-field>
+              <v-text-field
+                v-model="item1.description"
+                label="Description"
+              ></v-text-field>
+              <v-text-field
+                v-model="item1.duration"
+                label="Allocated hours"
+              ></v-text-field>
+              <v-text-field
+                v-model="item1.assigned"
+                label="Assigned member"
+              ></v-text-field>
+              <v-select
+                :items="arrPriority"
+                v-model="item1.priority"
+                label="Priority"
+              ></v-select>
+              <v-btn
+                style="margin: 5px"
+                color="green lighten-2"
+                @click="createTask(item1)"
+                @click.stop="dialog2 = false"
+              >
+                Add
+              </v-btn>
+              <v-btn
+                style="margin: 5px"
+                color="red lighten-1"
+                @click="dialog2 = false"
+              >
+                <!-- 4: Edit stuff: add onclick to close it -->
+                Cancel
+              </v-btn>
+            </div>
+          </v-card>
+        </v-dialog>
+        <v-btn
+          style="height: 28px; margin: 10px"
+          color="primary"
+          @click="dialog2 = true"
           >New task</v-btn
         >
       </div>
@@ -17,7 +58,7 @@
     <div class="row mt-3">
       <v-card class="col-md-2 red lighten-4">
         <h3>Backlog</h3>
-        <draggable class="list-group" :list="arrBacklog" group="tasks">
+        <draggable class="list-group" :list="arrBacklog" group="tasks" @change="backlogChange">
           <v-card
             style="margin: 10px; padding: 5px"
             class="list-group-items"
@@ -39,7 +80,7 @@
 
       <v-card class="col-md-2 yellow lighten-4">
         <h3>In progress</h3>
-        <draggable class="list-group" :list="arrInProgress" group="tasks">
+        <draggable class="list-group" :list="arrInProgress" group="tasks" @change="inProgressChange">
           <v-card
             style="margin: 10px; padding: 5px"
             class="list-group-items"
@@ -62,7 +103,7 @@
 
       <v-card class="col-md-2 blue lighten-4">
         <h3>Tested</h3>
-        <draggable class="list-group" :list="arrTested" group="tasks">
+        <draggable class="list-group" :list="arrTested" group="tasks" @change="testedChange">
           <v-card
             style="margin: 10px; padding: 5px"
             class="list-group-items"
@@ -85,7 +126,7 @@
 
       <v-card class="col-md-2 green lighten-4">
         <h3>Done</h3>
-        <draggable class="list-group" :list="arrDone" group="tasks">
+        <draggable class="list-group" :list="arrDone" group="tasks" @change="doneChange">
           <v-card
             style="margin: 10px; padding: 5px"
             class="list-group-items"
@@ -136,10 +177,11 @@
               v-model="item.assigned"
               label="Assigned member"
             ></v-text-field>
-            <v-text-field
+            <v-select
+              :items="arrPriority"
               v-model="item.priority"
               label="Priority"
-            ></v-text-field>
+            ></v-select>
             <v-btn
               style="margin: 5px"
               color="green lighten-2"
@@ -171,21 +213,19 @@ export default {
   },
   data() {
     return {
+      arrPriority: ["High", "Medium", "Low"],
       token: null,
       userID: null,
       project: null,
       updatedSuccess: false,
       updatedItem: "Tasks has been updated",
       dialog: false, // 3: edit - modal box
+      dialog2: false,
       activeEditItem: null, // 5 storing id to use with edit
       item: [], // 4 : Edit add to store for edit data//
+      item1: [],
       newTask: "",
-      arrBacklog: [
-        { name: "Project name", toggleIndividual: false },
-        { name: "New task", toggleIndividual: false },
-        { name: "Styling page", toggleIndividual: false },
-        { name: "Doing stuff", toggleIndividual: false },
-      ],
+      arrBacklog: [],
       arrInProgress: [],
       arrTested: [],
       arrDone: [],
@@ -197,12 +237,131 @@ export default {
     if (this.token == null && this.userID == null) {
       this.$router.push("Login");
     }
-   this.project = JSON.parse(sessionStorage.getItem("project"));
+    this.project = JSON.parse(sessionStorage.getItem("project"));
+    window.addEventListener('beforeunload', this.getTasks());
   },
-  mounted() {
-    this.getTasks();
-  },
+/* watch: {
+arrInProgress: {
+  deep:true,
+  handler(){
+    const last = this.arrInProgress[this.arrInProgress.length - 1];
+    console.log(last);
+  }
+} 
+}, */
   methods: {
+    backlogChange({added}) {
+      if(added) {
+        added.element.status = "Backlog";
+        this.updateStatus(added.element);
+      }
+    },
+
+  inProgressChange({added}) {
+      if(added) {
+        added.element.status = "inProgress";
+        this.updateStatus(added.element);
+      }
+    },
+
+    testedChange({added}) {
+      if(added) {
+        added.element.status = "Tested";
+        this.updateStatus(added.element);
+      }
+    },
+
+    doneChange({added}) {
+      if(added) {
+        added.element.status = "Done";
+        this.updateStatus(added.element);
+      }
+    },
+
+    createTask(item) {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": this.token,
+        },
+        body: JSON.stringify({
+          name: item.name,
+          description: item.description,
+          duration: item.duration,
+          assigned: item.assigned,
+          priority: item.priority,
+          status: "backlog",
+        }),
+      };
+      fetch(
+        "https://rest-api-pwa.herokuapp.com/api/tasks/",
+        requestOptions
+      ).then((response) =>
+        response
+          .json()
+          .then((data) => ({
+            data: data,
+            status: response.status,
+          }))
+          .then((response) => {
+            if (response.data) {
+              const taskID = response.data[0]._id;
+              this.bindTaskToProject(taskID);
+            } else {
+              alert(
+                "Server returned " +
+                  response.status +
+                  " : " +
+                  response.statusText
+              );
+            }
+          })
+      );
+    },
+    bindTaskToProject(taskID){
+      const arrayTask = this.project.tasks;
+      arrayTask.push(taskID);
+      this.project.tasks = arrayTask;
+       const requestOptions = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": this.token,
+        },
+        body: JSON.stringify({
+          tasks: arrayTask
+        }),
+      };
+      fetch(
+        "https://rest-api-pwa.herokuapp.com/api/projects/" + this.project._id,
+        requestOptions
+      )
+        .then((response) => {
+          if (response.ok) {
+            sessionStorage.setItem("project", JSON.stringify(this.project));
+            this.dialog2 = false;
+            alert("Task added");
+          this.arrBacklog = [];
+          this.arrInProgress = [];
+          this.arrTested = [];
+          this.arrDone = [];
+          this.getTasks();
+            return response.json();
+          } else {
+            alert(
+              "Server returned " +
+                response.status +
+                " : " +
+                response.statusText,
+              (this.error = "Something went wrong")
+            );
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        }); 
+    },
     getTasks() {
       this.project.tasks.forEach((taskID) => {
         fetch("https://rest-api-pwa.herokuapp.com/api/tasks/" + taskID, {
@@ -259,28 +418,33 @@ export default {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-           "auth-token": this.token
+          "auth-token": this.token,
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           name: item.name,
           description: item.description,
           duration: item.duration,
           assigned: item.assigned,
           priority: item.priority,
+          status: item.status
         }),
       };
       fetch(
-        "https://rest-api-pwa.herokuapp.com/api/tasks/" + item.ID,
+        "https://rest-api-pwa.herokuapp.com/api/tasks/" + item._id,
         requestOptions
-      ).then((response) => {
+      )
+        .then((response) => {
           if (response.ok) {
             this.dialog = false;
             alert("Task Updated");
             return response.json();
           } else {
             alert(
-              "Server returned " + response.status + " : " + response.statusText,
-              this.error = "Something went wrong"
+              "Server returned " +
+                response.status +
+                " : " +
+                response.statusText,
+              (this.error = "Something went wrong")
             );
           }
         })
@@ -288,6 +452,40 @@ export default {
           console.log(err);
         });
     },
+
+      updateStatus(item) {
+      const requestOptions = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": this.token,
+        },
+        body: JSON.stringify({
+          status: item.status
+        }),
+      };
+      fetch(
+        "https://rest-api-pwa.herokuapp.com/api/tasks/" + item._id,
+        requestOptions
+      )
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            alert(
+              "Server returned " +
+                response.status +
+                " : " +
+                response.statusText,
+              (this.error = "Something went wrong")
+            );
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
     toggleInd(item) {
       item.toggleIndividual = !item.toggleIndividual;
     },
