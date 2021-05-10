@@ -1,5 +1,6 @@
 <template>
   <div class="container mt-5">
+    <h1> {{ project.name }} </h1>
     <div class="row">
       <div class="col form-inline" style="padding-left: 0px">
         <v-dialog
@@ -249,6 +250,7 @@ arrInProgress: {
   }
 } 
 }, */
+
   methods: {
     backlogChange({added}) {
       if(added) {
