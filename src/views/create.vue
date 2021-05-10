@@ -52,7 +52,7 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-text-field
-                      v-model="projects"
+                      v-model="description"
                       :rules="rules"
                       label="Project Description"
                       required
@@ -122,7 +122,7 @@
             </v-row>
 
             <v-btn
-              :disabled="valid"
+              :disabled="!valid"
               color="primary"
               @click="
                 e1 = 2;
@@ -158,7 +158,7 @@
                     :rules="arrCheck"
                     style="margin: 10px; padding: 5px"
                     class="list-group-items"
-                    v-for="(element, index) in arrBacklog"
+                    v-for="(element, index) in taskBacklog"
                     :key="index"
                   >
                     {{ element.name }}
@@ -334,7 +334,7 @@
           <v-card height="300px" flat>
             <h2 style="text-align: center">Project id</h2>
             <div style="text-align: center">
-              <v-btn color="success">Create</v-btn>
+              <v-btn color="success" @click="createTasks">Create</v-btn>
             </div>
           </v-card>
 
@@ -353,15 +353,15 @@
 export default {
   name: "Create",
   data: () => ({
+    token: null,
+    userID: null,  
     radios: null, // fix later
     project: null,
-    projects: null,
-    id: null,
+    description: null,
     startDate: null, // fix later
     endDate: null, // fix later
     hour: null, // fix later
     stake: null,
-    members: null,
     leader: null,
     p_members: {
       member1: {
@@ -401,8 +401,10 @@ export default {
     github: null,
     totalHours: 0,
     //array for keeping data
-    arrBacklog: [],
+    taskBacklog: [],
+    taskDrop: [],
     techsUsed: [],
+    user: null,
     //rules start here
     valid: true,
     name: "Rules",
@@ -414,17 +416,26 @@ export default {
       (v) => !!v || "Is required",
       (v) => (v && v.length <= 3) || "Must be below 3 digits",
     ],
-    arrCheck: [(arrBacklog) => arrBacklog && arrBacklog.length >= 0],
+    arrCheck: [(taskBacklog) => taskBacklog && taskBacklog.length >= 0],
     techCheck: [(techsUsed) => techsUsed && techsUsed.length >= 0],
     e1: 1,
   }),
+  created() {
+    this.token = sessionStorage.getItem("user_token");
+    this.userID = sessionStorage.getItem("user_id");
+    if (this.token == null && this.userID == null) {
+      this.$router.push("Login");
+    } else {
+      this.getUser();
+    }
+  },
   methods: {
     validate() {
       this.$refs.form.validate();
     },
     add() {
       if (this.newTask) {
-        this.arrBacklog.push({ name: this.newTask });
+        this.taskBacklog.push({ name: this.newTask });
         this.newTask = "";
       }
     },
@@ -435,7 +446,151 @@ export default {
       }
     },
     removeA(index) {
-      this.arrBacklog.splice(index, 1);
+      this.taskBacklog.splice(index, 1);
+    },
+    createProject() {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+           "auth-token": this.token
+        },
+        body: JSON.stringify({ 
+          name: this.project,
+          description: this.description,
+          timeBegin: this.startDate,
+          timeEnd: this.endDate,
+          duration: this.hour,
+          stakeholder: this.stake,
+          leader: this.leader,
+          cloud: this.cloud,
+          github: this.github,
+          tech: this.techsUsed,
+          tasks: this.taskDrop,
+          status: "Ongoing"
+        }),
+      };
+      fetch(
+        "https://rest-api-pwa.herokuapp.com/api/projects/",
+        requestOptions
+      ).then((response) =>
+        response
+          .json()
+          .then((data) => ({
+            data: data,
+            status: response.status,
+          }))
+          .then((response) => {
+            if (response.data) {
+              const newProject = response.data[0]._id;
+              this.addProjectToUser(newProject);
+              
+            } else {
+              alert(
+                "Server returned " +
+                  response.status +
+                  " : " +
+                  response.statusText
+              );
+            }
+          })
+      );
+    },
+    addProjectToUser(newProject) {
+      const arrProject = this.user.projects;
+      arrProject.push(newProject);
+      console.log(this.userID);
+      const requestOptions = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+           "auth-token": this.token
+        },
+        body: JSON.stringify({ 
+          password: this.user.password,
+          projects: arrProject
+        }),
+      };
+      fetch(
+        "https://rest-api-pwa.herokuapp.com/api/users/" + this.userID,
+        requestOptions
+      ).then((response) => {
+          if (response.ok) {
+            this.$router.push("/");
+            return response.json();
+          } else {
+            alert(
+              "Server returned " + response.status + " : " + response.statusText,
+              this.error = "Something went wrong"
+            );
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    getUser() {
+      fetch("https://rest-api-pwa.herokuapp.com/api/users/" + this.userID, {
+        method: "GET",
+        headers: { "auth-token": this.token },
+      }).then((response) =>
+        response
+          .json()
+          .then((data) => ({
+            data: data,
+            status: response.status,
+          }))
+          .then((response) => {
+            if (response.data) {
+              this.user = response.data;
+            } else {
+              alert(
+                "Server returned " +
+                  response.status +
+                  " : " +
+                  response.statusText
+              );
+            }
+          })
+      );
+    },
+    createTasks() {
+     this.taskBacklog.forEach((Task) => { const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+           "auth-token": this.token
+        },
+        body: JSON.stringify({ 
+          name: Task.name
+        }),
+      };
+      fetch(
+        "https://rest-api-pwa.herokuapp.com/api/tasks/",
+        requestOptions
+      ).then((response) =>
+        response
+          .json()
+          .then((data) => ({
+            data: data,
+            status: response.status,
+          }))
+          .then((response) => {
+            if (response.data) {
+              this.taskDrop.push(response.data[0]._id);
+              
+            } else {
+              alert(
+                "Server returned " +
+                  response.status +
+                  " : " +
+                  response.statusText
+              );
+            }
+          })
+      );
+     })
+    this.createProject();
     },
     // calc() {
     //   this.p_members.forEach((element) => {
