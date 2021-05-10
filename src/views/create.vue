@@ -449,6 +449,8 @@ export default {
       this.taskBacklog.splice(index, 1);
     },
     createProject() {
+      const taskList = this.taskDrop;
+      console.log(taskList);
       const requestOptions = {
         method: "POST",
         headers: {
@@ -466,7 +468,7 @@ export default {
           cloud: this.cloud,
           github: this.github,
           tech: this.techsUsed,
-          tasks: this.taskDrop,
+          tasks: taskList,
           status: "Ongoing"
         }),
       };
@@ -499,7 +501,6 @@ export default {
     addProjectToUser(newProject) {
       const arrProject = this.user.projects;
       arrProject.push(newProject);
-      console.log(this.userID);
       const requestOptions = {
         method: "PUT",
         headers: {
@@ -516,7 +517,7 @@ export default {
         requestOptions
       ).then((response) => {
           if (response.ok) {
-            this.$router.push("/");
+            this.$router.push({name: 'Home', params:{text: "Project Created", snackbar: true}});
             return response.json();
           } else {
             alert(
@@ -562,7 +563,8 @@ export default {
            "auth-token": this.token
         },
         body: JSON.stringify({ 
-          name: Task.name
+          name: Task.name,
+          status: "Backlog"
         }),
       };
       fetch(
@@ -590,6 +592,7 @@ export default {
           })
       );
      })
+    
     this.createProject();
     },
     // calc() {
