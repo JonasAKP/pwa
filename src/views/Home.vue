@@ -105,6 +105,8 @@ export default {
     userID: null,
     user: null,
     radio:null,
+    text:null,
+    snackbar: false
   }),
   components: {
     ProjectFront,
@@ -117,6 +119,8 @@ export default {
     } else {
       this.getUser();
     }
+    this.text = this.$route.params.text;
+    this.snackbar = this.$route.params.snackbar;
   },
 
   methods: {

@@ -151,8 +151,8 @@ export default {
         requestOptions
       ).then((response) => {
           if (response.ok) {
-            alert("Password changed");
-             this.$router.push("/");
+            
+             this.$router.push( {name:'Home', params: {text: "Password has been changed", snackbar: true}});
             return response.json();
           } else {
             alert(

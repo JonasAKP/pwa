@@ -118,7 +118,7 @@ export default {
                 const userID = sessionStorage.getItem("user_id");
                 if (token != null && userID != null) {
                   alert(this.email + " Has been logged in");
-                  this.$router.push("/");
+                  this.$router.push( {name:'Home', params: {text: "You Been logged in as " + this.email, snackbar: true}});
                 } else {  
                   alert("Something went wrong");
                 }
