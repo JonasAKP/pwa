@@ -43,22 +43,14 @@
       elevate-on-scroll
     >
       <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-          @click.stop="drawer = !drawer"
-        />
-
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>Trello Clone</v-toolbar-title>
       </div>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-spacer></v-spacer>
-      <v-btn elevation="0" outlined to="/Login" v-if="!userEmail && !userToken">Login</v-btn>
+      <v-btn elevation="0" outlined to="/Login" v-if="!userEmail && !userToken"
+        >Login</v-btn
+      >
     </v-app-bar>
     <v-main>
       <router-view></router-view>
@@ -67,14 +59,10 @@
 </template>
 
 <script>
-
-
 export default {
   name: "App",
 
-  components: {
-   
-  },
+  components: {},
 
   data: () => ({ drawer: null, userEmail: null, userToken: null }),
   methods: {
@@ -87,5 +75,7 @@ export default {
     this.userID = sessionStorage.getItem("user_id");
     this.userToken = sessionStorage.getItem("user_token");
   },
+
+  
 };
 </script>
