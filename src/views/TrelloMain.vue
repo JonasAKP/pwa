@@ -1,17 +1,16 @@
 <template>
   <div class="container mt-5">
-    <h1> {{ project.name }} </h1>
+    <h1>{{ project.name }}</h1>
     <v-btn color="success" @click="sortPriority()">Sort by priority</v-btn>
-    <br><br>
-         <!-- Add new task -->
+    <br /><br />
+    <!-- Add new task -->
     <div class="row">
       <div class="col form-inline" style="padding-left: 0px">
- 
         <v-dialog
           v-model="dialog2"
           max-width="500px"
           transition="dialog-transition"
-        > 
+        >
           <v-card>
             <div class="pa-5">
               <v-text-field v-model="item1.name" label="Name"></v-text-field>
@@ -65,7 +64,12 @@
     <div class="row mt-3">
       <v-card class="col-md-2 red lighten-4">
         <h3>Backlog</h3>
-        <draggable class="list-group" :list="arrBacklog" group="tasks" @change="backlogChange">
+        <draggable
+          class="list-group"
+          :list="arrBacklog"
+          group="tasks"
+          @change="backlogChange"
+        >
           <v-card
             style="margin: 10px; padding: 5px"
             class="list-group-items"
@@ -84,10 +88,15 @@
         </draggable>
       </v-card>
       <v-spacer></v-spacer>
-        <!-- In progress card drag available -->
+      <!-- In progress card drag available -->
       <v-card class="col-md-2 yellow lighten-4">
         <h3>In progress</h3>
-        <draggable class="list-group" :list="arrInProgress" group="tasks" @change="inProgressChange">
+        <draggable
+          class="list-group"
+          :list="arrInProgress"
+          group="tasks"
+          @change="inProgressChange"
+        >
           <v-card
             style="margin: 10px; padding: 5px"
             class="list-group-items"
@@ -107,10 +116,15 @@
         </draggable>
       </v-card>
       <v-spacer></v-spacer>
-        <!-- Tested Card drag available -->
+      <!-- Tested Card drag available -->
       <v-card class="col-md-2 blue lighten-4">
         <h3>Tested</h3>
-        <draggable class="list-group" :list="arrTested" group="tasks" @change="testedChange">
+        <draggable
+          class="list-group"
+          :list="arrTested"
+          group="tasks"
+          @change="testedChange"
+        >
           <v-card
             style="margin: 10px; padding: 5px"
             class="list-group-items"
@@ -130,10 +144,15 @@
         </draggable>
       </v-card>
       <v-spacer></v-spacer>
-        <!-- Done Card, drag available, put finished tasks here -->
+      <!-- Done Card, drag available, put finished tasks here -->
       <v-card class="col-md-2 green lighten-4">
         <h3>Done</h3>
-        <draggable class="list-group" :list="arrDone" group="tasks" @change="doneChange">
+        <draggable
+          class="list-group"
+          :list="arrDone"
+          group="tasks"
+          @change="doneChange"
+        >
           <v-card
             style="margin: 10px; padding: 5px"
             class="list-group-items"
@@ -207,7 +226,11 @@ export default {
   },
   data() {
     return {
-      arrPriority: [{text:"High",value:1}, {text:"Medium",value:2}, {text:"Low",value:3}],
+      arrPriority: [
+        { text: "High", value: 1 },
+        { text: "Medium", value: 2 },
+        { text: "Low", value: 3 },
+      ],
       token: null,
       userID: null,
       project: null,
@@ -225,7 +248,7 @@ export default {
       arrDone: [],
     };
   },
-  
+
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
@@ -233,43 +256,43 @@ export default {
       this.$router.push("Login");
     }
     this.project = JSON.parse(sessionStorage.getItem("project"));
-    window.addEventListener('beforeunload', this.getTasks());
+    window.addEventListener("beforeunload", this.getTasks());
   },
 
   methods: {
     sortPriority() {
-      this.arrBacklog.sort((a,b) => a.priority > b.priority ? 1 : -1)
-      this.arrInProgress.sort((a,b) => a.priority > b.priority ? 1 : -1)
-      this.arrTested.sort((a,b) => a.priority > b.priority ? 1 : -1)
-      this.arrDone.sort((a,b) => a.priority > b.priority ? 1 : -1)
+      this.arrBacklog.sort((a, b) => (a.priority > b.priority ? 1 : -1));
+      this.arrInProgress.sort((a, b) => (a.priority > b.priority ? 1 : -1));
+      this.arrTested.sort((a, b) => (a.priority > b.priority ? 1 : -1));
+      this.arrDone.sort((a, b) => (a.priority > b.priority ? 1 : -1));
     },
 
-    backlogChange({added}) {
-      if(added) {
+    backlogChange({ added }) {
+      if (added) {
         added.element.status = "Backlog";
         this.updateStatus(added.element);
         this.sortPriority();
       }
     },
 
-  inProgressChange({added}) {
-      if(added) {
+    inProgressChange({ added }) {
+      if (added) {
         added.element.status = "inProgress";
         this.updateStatus(added.element);
         this.sortPriority();
       }
     },
 
-    testedChange({added}) {
-      if(added) {
+    testedChange({ added }) {
+      if (added) {
         added.element.status = "Tested";
         this.updateStatus(added.element);
         this.sortPriority();
       }
     },
 
-    doneChange({added}) {
-      if(added) {
+    doneChange({ added }) {
+      if (added) {
         added.element.status = "Done";
         this.updateStatus(added.element);
         this.sortPriority();
@@ -317,18 +340,18 @@ export default {
           })
       );
     },
-    bindTaskToProject(taskID){
+    bindTaskToProject(taskID) {
       const arrayTask = this.project.tasks;
       arrayTask.push(taskID);
       this.project.tasks = arrayTask;
-       const requestOptions = {
+      const requestOptions = {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "auth-token": this.token,
         },
         body: JSON.stringify({
-          tasks: arrayTask
+          tasks: arrayTask,
         }),
       };
       fetch(
@@ -340,11 +363,11 @@ export default {
             sessionStorage.setItem("project", JSON.stringify(this.project));
             this.dialog2 = false;
             alert("Task added");
-          this.arrBacklog = [];
-          this.arrInProgress = [];
-          this.arrTested = [];
-          this.arrDone = [];
-          this.getTasks();
+            this.arrBacklog = [];
+            this.arrInProgress = [];
+            this.arrTested = [];
+            this.arrDone = [];
+            this.getTasks();
             return response.json();
           } else {
             alert(
@@ -358,7 +381,7 @@ export default {
         })
         .catch((err) => {
           console.log(err);
-        }); 
+        });
     },
     getTasks() {
       this.project.tasks.forEach((taskID) => {
@@ -424,7 +447,7 @@ export default {
           duration: item.duration,
           assigned: item.assigned,
           priority: item.priority,
-          status: item.status
+          status: item.status,
         }),
       };
       fetch(
@@ -451,7 +474,7 @@ export default {
         });
     },
 
-      updateStatus(item) {
+    updateStatus(item) {
       const requestOptions = {
         method: "PUT",
         headers: {
@@ -459,7 +482,7 @@ export default {
           "auth-token": this.token,
         },
         body: JSON.stringify({
-          status: item.status
+          status: item.status,
         }),
       };
       fetch(
