@@ -1,13 +1,17 @@
 <template>
   <div class="container mt-5">
     <h1> {{ project.name }} </h1>
+    <v-btn color="success" @click="sortPriority()">Sort by priority</v-btn>
+    <br><br>
+         <!-- Add new task -->
     <div class="row">
       <div class="col form-inline" style="padding-left: 0px">
+ 
         <v-dialog
           v-model="dialog2"
           max-width="500px"
           transition="dialog-transition"
-        >
+        > 
           <v-card>
             <div class="pa-5">
               <v-text-field v-model="item1.name" label="Name"></v-text-field>
@@ -25,6 +29,8 @@
               ></v-text-field>
               <v-select
                 :items="arrPriority"
+                item-text="text"
+                item-value="value"
                 v-model="item1.priority"
                 label="Priority"
               ></v-select>
@@ -55,7 +61,7 @@
         >
       </div>
     </div>
-
+    <!-- backlog Card -->
     <div class="row mt-3">
       <v-card class="col-md-2 red lighten-4">
         <h3>Backlog</h3>
@@ -70,7 +76,7 @@
               {{ element.name }}
               <div class="text-end">
                 <v-btn @click="editItem(element)" @click.stop="dialog = true">
-                  Edit<!-- 2: edit onclick modal -->
+                  Edit<!-- Edit tasks -->
                 </v-btn>
               </div>
             </div>
@@ -78,7 +84,7 @@
         </draggable>
       </v-card>
       <v-spacer></v-spacer>
-
+        <!-- In progress card drag available -->
       <v-card class="col-md-2 yellow lighten-4">
         <h3>In progress</h3>
         <draggable class="list-group" :list="arrInProgress" group="tasks" @change="inProgressChange">
@@ -101,7 +107,7 @@
         </draggable>
       </v-card>
       <v-spacer></v-spacer>
-
+        <!-- Tested Card drag available -->
       <v-card class="col-md-2 blue lighten-4">
         <h3>Tested</h3>
         <draggable class="list-group" :list="arrTested" group="tasks" @change="testedChange">
@@ -124,7 +130,7 @@
         </draggable>
       </v-card>
       <v-spacer></v-spacer>
-
+        <!-- Done Card, drag available, put finished tasks here -->
       <v-card class="col-md-2 green lighten-4">
         <h3>Done</h3>
         <draggable class="list-group" :list="arrDone" group="tasks" @change="doneChange">
@@ -148,19 +154,7 @@
       </v-card>
     </div>
 
-    <!--         <div>
-          <h1>open close</h1>
-          
-          <div v-for="item in arrBacklog" :key="item.id">
-            <div v-show="item.toggleIndividual">
-              Name: {{ item.name }}
-             <button @click="toggleInd(item)">close</button>
-            </div>
-            <div v-if="!item.toggleIndividual">
-              <button @click="toggleInd(item)">open</button>
-            </div>
-          </div>
-        </div> -->
+    <!-- Modal with information for editing tasks -->
     <div>
       <v-dialog v-model="dialog" max-width="400">
         <v-card>
@@ -196,7 +190,6 @@
               color="red lighten-1"
               @click="dialog = false"
             >
-              <!-- 4: Edit stuff: add onclick to close it -->
               Cancel
             </v-btn>
           </div>
@@ -214,7 +207,7 @@ export default {
   },
   data() {
     return {
-      arrPriority: ["High", "Medium", "Low"],
+      arrPriority: [{text:"High",value:1}, {text:"Medium",value:2}, {text:"Low",value:3}],
       token: null,
       userID: null,
       project: null,
@@ -232,6 +225,7 @@ export default {
       arrDone: [],
     };
   },
+  
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
@@ -241,21 +235,20 @@ export default {
     this.project = JSON.parse(sessionStorage.getItem("project"));
     window.addEventListener('beforeunload', this.getTasks());
   },
-/* watch: {
-arrInProgress: {
-  deep:true,
-  handler(){
-    const last = this.arrInProgress[this.arrInProgress.length - 1];
-    console.log(last);
-  }
-} 
-}, */
 
   methods: {
+    sortPriority() {
+      this.arrBacklog.sort((a,b) => a.priority > b.priority ? 1 : -1)
+      this.arrInProgress.sort((a,b) => a.priority > b.priority ? 1 : -1)
+      this.arrTested.sort((a,b) => a.priority > b.priority ? 1 : -1)
+      this.arrDone.sort((a,b) => a.priority > b.priority ? 1 : -1)
+    },
+
     backlogChange({added}) {
       if(added) {
         added.element.status = "Backlog";
         this.updateStatus(added.element);
+        this.sortPriority();
       }
     },
 
@@ -263,6 +256,7 @@ arrInProgress: {
       if(added) {
         added.element.status = "inProgress";
         this.updateStatus(added.element);
+        this.sortPriority();
       }
     },
 
@@ -270,6 +264,7 @@ arrInProgress: {
       if(added) {
         added.element.status = "Tested";
         this.updateStatus(added.element);
+        this.sortPriority();
       }
     },
 
@@ -277,6 +272,7 @@ arrInProgress: {
       if(added) {
         added.element.status = "Done";
         this.updateStatus(added.element);
+        this.sortPriority();
       }
     },
 
