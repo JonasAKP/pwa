@@ -65,18 +65,54 @@
                 <h2>Time Schedule</h2>
 
                 <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="startDate"
-                    :rules="rules"
-                    label="Start date"
-                  ></v-text-field>
+                  <v-menu
+                    v-model="menu"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="startDate"
+                        label="Picker without buttons"
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="startDate"
+                      @input="menu = false"
+                    ></v-date-picker>
+                  </v-menu>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="endDate"
-                    :rules="rules"
-                    label="End date"
-                  ></v-text-field>
+                  <v-menu
+                    v-model="menu2"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="endDate"
+                        label="Picker without buttons"
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="endDate"
+                      @input="menu2 = false"
+                    ></v-date-picker>
+                  </v-menu>
                 </v-col>
                 <v-col cols="12" sm="6">
                   <v-text-field
@@ -110,13 +146,19 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-for="(member, index) in p_members"
-                    :key="index"
-                    v-model="member.name"
-                    :label="member.label"
-                  >
-                  </v-text-field>
+                  <v-col cols="12">
+                    <v-combobox
+                      v-model="p_members"
+                      :items="allMembers"
+                      label="Combobox"
+                      multiple
+                      outlined
+                      dense
+                      item-text="name"
+                      :item-value="allMembers._id"
+                      return-object
+                    ></v-combobox>
+                  </v-col>
                 </v-col>
               </v-col>
             </v-row>
@@ -174,42 +216,11 @@
                 </v-card>
               </v-row>
             </v-col>
-            <v-col>
-              <!-- <v-checkbox
-                v-model="selected"
-                label="Report"
-                value="Report"
-              ></v-checkbox>
-              <v-checkbox
-                v-model="selected"
-                label="Jacob"
-                value="Jacob"
-              ></v-checkbox>
-              <v-checkbox
-                v-model="selected"
-                label="John"
-                value="John"
-              ></v-checkbox>
-              <v-checkbox
-                v-model="selected"
-                label="Jacob"
-                value="Jacob"
-              ></v-checkbox>
-              <v-checkbox
-                v-model="selected"
-                label="John"
-                value="John"
-              ></v-checkbox>
-              <v-checkbox
-                v-model="selected"
-                label="Jacob"
-                value="Jacob"
-              ></v-checkbox> -->
-            </v-col>
+            <v-col> </v-col>
           </v-row>
           <!-- Content ends here -->
 
-          <v-btn color="primary" @click="(e1 = 3)"> Continue </v-btn>
+          <v-btn color="primary" @click="(e1 = 3), calc()"> Continue </v-btn>
 
           <v-btn text to="/"> Cancel </v-btn>
 
@@ -222,18 +233,6 @@
               <v-row>
                 <v-col class="col-sm-4">
                   <h4>Project Members</h4>
-                  <v-radio-group>
-                    <v-radio
-                      :value="member.name"
-                      v-for="member in p_members"
-                      :key="member.name"
-                      :label="member.name"
-                    >
-                    </v-radio>
-                  </v-radio-group>
-                </v-col>
-
-                <v-col class="col-sm-4">
                   <v-text-field
                     label="Tasks"
                     style="padding: 0px"
@@ -242,8 +241,9 @@
                   <v-text-field
                     style="padding: 0px"
                     type="number"
-                    label="Hours"
+                    label="Hours Available"
                     :rules="hours"
+                    disabled
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -253,15 +253,15 @@
                     <thead>
                       <tr>
                         <th class="text-left">Name</th>
-                        <th class="text-left">Tasks</th>
-                        <th class="text-left">Hours</th>
+                        <th class="text-left">Role</th>
+                        <th class="text-left">Hours available</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr v-for="member in p_members" :key="member.name">
                         <td>{{ member.name }}</td>
                         <td>{{ member.role }}</td>
-                        <td>{{ member.hours }}</td>
+                        <td>{{ member.weekHours }}</td>
                       </tr>
                       <tr>
                         <td>Total hours</td>
@@ -354,56 +354,27 @@ export default {
   name: "Create",
   data: () => ({
     token: null,
-    userID: null,  
+    userID: null,
     radios: null, // fix later
     project: null,
     description: null,
     startDate: null, // fix later
-    endDate: null, // fix later
+    endDate: null,
+    menu: false,
+    menu2: false, // fix later
     hour: null, // fix later
     stake: null,
     leader: null,
-    p_members: {
-      member1: {
-        label: "Member 1",
-        role: "QA",
-        name: "John",
-        hours: 30,
-      },
-      member2: {
-        label: "Member 2",
-        role: "Lead Dev",
-        name: "Silvia",
-        hours: 40,
-      },
-      member3: {
-        label: "Member 3",
-        role: "Developer",
-        name: "Jane",
-        hours: 60,
-      },
-      member4: {
-        label: "Member 4",
-        role: "QC",
-        name: "Smith",
-        hours: 10,
-      },
-      member5: {
-        label: "Member 5",
-        role: "Debugger",
-        name: "Brian",
-        hours: 5,
-      },
-    },
+    p_members: [],
     newTask: null,
     selected: null,
     cloud: null,
     github: null,
-    totalHours: 0,
     //array for keeping data
     taskBacklog: [],
     taskDrop: [],
     techsUsed: [],
+    allMembers: [],
     user: null,
     //rules start here
     valid: true,
@@ -427,6 +398,7 @@ export default {
       this.$router.push("Login");
     } else {
       this.getUser();
+      this.getAllUsers();
     }
   },
   methods: {
@@ -449,15 +421,15 @@ export default {
       this.taskBacklog.splice(index, 1);
     },
     createProject() {
-      const taskList = this.taskDrop;
-      console.log(taskList);
+      //const taskList = this.taskDrop;
+      console.log(this.taskDrop);
       const requestOptions = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-           "auth-token": this.token
+          "auth-token": this.token,
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           name: this.project,
           description: this.description,
           timeBegin: this.startDate,
@@ -468,8 +440,9 @@ export default {
           cloud: this.cloud,
           github: this.github,
           tech: this.techsUsed,
-          tasks: taskList,
-          status: "Ongoing"
+          tasks: this.taskDrop,
+          status: "Ongoing",
+          members: this.p_members,
         }),
       };
       fetch(
@@ -486,7 +459,7 @@ export default {
             if (response.data) {
               const newProject = response.data[0]._id;
               this.addProjectToUser(newProject);
-              
+                console.log("NP ", newProject)
             } else {
               alert(
                 "Server returned " +
@@ -505,24 +478,31 @@ export default {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-           "auth-token": this.token
+          "auth-token": this.token,
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           password: this.user.password,
-          projects: arrProject
+          projects: arrProject,
         }),
       };
       fetch(
         "https://rest-api-pwa.herokuapp.com/api/users/" + this.userID,
         requestOptions
-      ).then((response) => {
+      )
+        .then((response) => {
           if (response.ok) {
-            this.$router.push({name: 'Home', params:{text: "Project Created", snackbar: true}});
+          /*  this.$router.push({
+              name: "Home",
+              params: { text: "Project Created", snackbar: true },
+            });*/
             return response.json();
           } else {
             alert(
-              "Server returned " + response.status + " : " + response.statusText,
-              this.error = "Something went wrong"
+              "Server returned " +
+                response.status +
+                " : " +
+                response.statusText,
+              (this.error = "Something went wrong")
             );
           }
         })
@@ -556,21 +536,52 @@ export default {
       );
     },
     createTasks() {
-     this.taskBacklog.forEach((Task) => { const requestOptions = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-           "auth-token": this.token
-        },
-        body: JSON.stringify({ 
-          name: Task.name,
-          status: "Backlog"
-        }),
-      };
-      fetch(
-        "https://rest-api-pwa.herokuapp.com/api/tasks/",
-        requestOptions
-      ).then((response) =>
+      this.taskBacklog.forEach((Task) => {
+        const requestOptions = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": this.token,
+          },
+          body: JSON.stringify({
+            name: Task.name,
+            status: "Backlog",
+          }),
+        };
+        fetch(
+          "https://rest-api-pwa.herokuapp.com/api/tasks/",
+          requestOptions
+        ).then((response) =>
+          response
+            .json()
+            .then((data) => ({
+              data: data,
+              status: response.status,
+            }))
+            .then((response) => {
+               this.taskDrop.push( response.data[0]._id);  // response.data[0]._id
+                console.log("TD resp data array 0", this.taskDrop)
+              if (response.data) {
+               console.log("haha")
+              } else {
+                alert(
+                  "Server returned " +
+                    response.status +
+                    " : " +
+                    response.statusText
+                );
+              }
+            })
+        );
+      });
+
+      this.createProject();
+    },
+    getAllUsers() {
+      fetch("https://rest-api-pwa.herokuapp.com/api/users/", {
+        method: "GET",
+        headers: { "auth-token": this.token },
+      }).then((response) =>
         response
           .json()
           .then((data) => ({
@@ -579,8 +590,7 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
-              this.taskDrop.push(response.data[0]._id);
-              
+              this.allMembers = response.data;
             } else {
               alert(
                 "Server returned " +
@@ -591,16 +601,12 @@ export default {
             }
           })
       );
-     })
-    
-    this.createProject();
     },
-    // calc() {
-    //   this.p_members.forEach((element) => {
-    //     this.totalHours =+ element.hours;
-    //     console.log(this.totalHours);
-    //   });
-    // },
+    calc() {
+      this.p_members.forEach((element) => {
+        this.totalHours = this.totalHours + element.weekHours;
+      });
+    },
   },
 };
 </script>
