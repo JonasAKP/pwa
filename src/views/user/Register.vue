@@ -7,7 +7,7 @@
             <v-text-field
               v-model="name"
               hint="At least 4 characters"
-              :counter="10"
+              counter
               :rules="nameRules"
               label="Name"
               required
@@ -17,6 +17,15 @@
               v-model="email"
               :rules="emailRules"
               label="E-mail"
+              required
+            ></v-text-field>
+
+            <v-text-field
+              v-model="role"
+              hint="At least 4 characters"
+              counter
+              :rules="roleRules"
+              label="Role"
               required
             ></v-text-field>
 
@@ -80,7 +89,12 @@ export default {
     name: "",
     nameRules: [
       (v) => !!v || "Name is required",
-      (v) => (v && v.length >= 4) || "Name must be more than 4 characters",
+      (v) => (v && v.length >= 2) || "Name must be more than 2 characters",
+    ],
+    role: "",
+    roleRules: [
+      (v) => !!v || "role is required",
+      (v) => (v && v.length >= 4) || "Role must be more than 4 characters",
     ],
     email: "",
     emailRules: [
@@ -110,8 +124,8 @@ export default {
           this.error = "Password does not match";
         } else {
           this.registerUser();
-          alert("User Registered")
-          this.$router.push('Login');
+          alert("User Registered");
+          this.$router.push("Login");
         }
       }
     },
@@ -136,6 +150,7 @@ export default {
           name: this.name,
           email: this.email,
           password: this.password,
+          role: this.role
         }),
       };
       fetch(
@@ -148,8 +163,11 @@ export default {
             return response.json();
           } else {
             alert(
-              "Server returned " + response.status + " : " + response.statusText,
-              this.error = "Something went wrong"
+              "Server returned " +
+                response.status +
+                " : " +
+                response.statusText,
+              (this.error = "Something went wrong")
             );
           }
         })
