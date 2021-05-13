@@ -6,7 +6,7 @@
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-text-field
               v-model="name"
-              hint="At least 4 characters"
+              hint="At least 2 characters"
               counter
               :rules="nameRules"
               label="Name"
@@ -26,6 +26,16 @@
               counter
               :rules="roleRules"
               label="Role"
+              required
+            ></v-text-field>
+
+            <v-text-field
+              v-model="weekHours"
+              type="number"
+              hint="At least 1 characters"
+              counter
+              :rules="weekHoursRules"
+              label="Working Hours"
               required
             ></v-text-field>
 
@@ -91,6 +101,12 @@ export default {
       (v) => !!v || "Name is required",
       (v) => (v && v.length >= 2) || "Name must be more than 2 characters",
     ],
+    weekHours: "",
+    weekHoursRules: [
+      (v) => !!v || "working hours is required",
+      (v) =>
+        (v && v.length >= 1) || "working hour must be more than 1 characters",
+    ],
     role: "",
     roleRules: [
       (v) => !!v || "role is required",
@@ -124,7 +140,7 @@ export default {
           this.error = "Password does not match";
         } else {
           this.registerUser();
-          alert("User Registered");
+
           this.$router.push("Login");
         }
       }
@@ -150,7 +166,8 @@ export default {
           name: this.name,
           email: this.email,
           password: this.password,
-          role: this.role
+          role: this.role,
+          weekHours: this.weekHours,
         }),
       };
       fetch(
@@ -160,6 +177,7 @@ export default {
       )
         .then((response) => {
           if (response.ok) {
+            alert("User Registered");
             return response.json();
           } else {
             alert(
