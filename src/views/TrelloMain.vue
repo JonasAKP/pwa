@@ -58,7 +58,11 @@
           @click="dialog2 = true"
           >New task</v-btn
         >
-        <h3>Color meaning: <span style="color: #C62828">Red</span>= High priority, <span style="color: #F9A825">Yellow</span>= Medium priority, <span style="color: #43A047">Green</span>= Low priority</h3>
+        <h3>
+          Color meaning: <span style="color: #c62828">Red</span>= High priority,
+          <span style="color: #f9a825">Yellow</span>= Medium priority,
+          <span style="color: #43a047">Green</span>= Low priority
+        </h3>
       </div>
     </div>
     <!-- backlog Card -->
@@ -72,7 +76,7 @@
           @change="backlogChange"
         >
           <v-card
-            style="margin: 10px; padding: 10px; color: white; font-size: 25px; "
+            style="margin: 10px; padding: 10px; color: white; font-size: 25px"
             class="list-group-items"
             v-for="element in arrBacklog"
             :key="element.name"
@@ -100,7 +104,7 @@
           @change="inProgressChange"
         >
           <v-card
-            style="margin: 10px; padding: 10px; color: white; font-size: 25px;"
+            style="margin: 10px; padding: 10px; color: white; font-size: 25px"
             class="list-group-items"
             v-for="element in arrInProgress"
             :key="element.name"
@@ -129,7 +133,7 @@
           @change="testedChange"
         >
           <v-card
-            style="margin: 10px; padding: 10px; color: white; font-size: 25px;"
+            style="margin: 10px; padding: 10px; color: white; font-size: 25px"
             class="list-group-items"
             v-for="element in arrTested"
             :key="element.name"
@@ -158,7 +162,7 @@
           @change="doneChange"
         >
           <v-card
-            style="margin: 10px; padding: 10px; color: white; font-size: 25px;"
+            style="margin: 10px; padding: 10px; color: white; font-size: 25px"
             class="list-group-items"
             v-for="element in arrDone"
             :key="element.name"
