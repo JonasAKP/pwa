@@ -75,8 +75,9 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
+                        :rules="dates"
                         v-model="startDate"
-                        label="Picker without buttons"
+                        label="Start date"
                         prepend-icon="mdi-calendar"
                         readonly
                         v-bind="attrs"
@@ -100,8 +101,9 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
+                        :rules="dates"
                         v-model="endDate"
-                        label="Picker without buttons"
+                        label="End date"
                         prepend-icon="mdi-calendar"
                         readonly
                         v-bind="attrs"
@@ -130,7 +132,7 @@
                 <v-col cols="12" sm="6">
                   <v-text-field
                     v-model="stake"
-                    :rules="rules"
+                    :rules="names"
                     label="Stakeholder/partners"
                   ></v-text-field>
                 </v-col>
@@ -141,23 +143,25 @@
                 <v-col cols="12" sm="6">
                   <v-text-field
                     v-model="leader"
-                    :rules="rules"
+                    :rules="names"
                     label="Project Leader"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
                   <v-col cols="12">
-                    <v-combobox
+                    <v-select
+                      disable-lookup
+                      style="margin: -10px"
+                      :rules="members"
                       v-model="p_members"
                       :items="allMembers"
-                      label="Combobox"
+                      label="Members"
                       multiple
-                      outlined
-                      dense
+                      chips
                       item-text="name"
                       :item-value="allMembers._id"
                       return-object
-                    ></v-combobox>
+                    ></v-select>
                   </v-col>
                 </v-col>
               </v-col>
@@ -184,7 +188,6 @@
             <v-col cols="12" md="5">
               <v-row style="margin: 0">
                 <v-text-field
-                  :rules="rules"
                   v-model="newTask"
                   placeholder="Enter Task"
                   v-on:keyup.enter="add"
@@ -197,7 +200,6 @@
                 <v-card class="col-md-12" flat>
                   <h3>Tasks</h3>
                   <v-card
-                    :rules="arrCheck"
                     style="margin: 10px; padding: 5px"
                     class="list-group-items"
                     v-for="(element, index) in taskBacklog"
@@ -220,7 +222,15 @@
           </v-row>
           <!-- Content ends here -->
 
-          <v-btn color="primary" @click="(e1 = 3), calc()"> Continue </v-btn>
+          <v-btn
+            color="primary"
+            @click="
+              calc();
+              e1 = 3;
+            "
+          >
+            Continue
+          </v-btn>
 
           <v-btn text to="/"> Cancel </v-btn>
 
@@ -228,27 +238,11 @@
         </v-stepper-content>
 
         <v-stepper-content step="3">
-          <v-row>
-            <v-col class="col-sm-6">
-              <v-row>
-                <v-col class="col-sm-4">
-                  <h4>Project Members</h4>
-                  <v-text-field
-                    label="Tasks"
-                    style="padding: 0px"
-                    class="my-10"
-                  ></v-text-field>
-                  <v-text-field
-                    style="padding: 0px"
-                    type="number"
-                    label="Hours Available"
-                    :rules="hours"
-                    disabled
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-simple-table style="text-align: center; margin: 30px">
+          <v-form>
+            <v-row>
+              <v-col class="col-sm-6">
+                <h4>Project Members</h4>
+                <v-simple-table style="margin: 0 0 30px 0">
                   <template v-slot:default>
                     <thead>
                       <tr>
@@ -271,78 +265,88 @@
                     </tbody>
                   </template>
                 </v-simple-table>
-              </v-row>
-            </v-col>
+                <v-row> </v-row>
+              </v-col>
 
-            <v-col class="col-sm-6">
-              <v-row>
-                <v-col cols="12" sm="5">
-                  <h4>Cloud location</h4>
-                  <v-text-field
-                    v-model="cloud"
-                    :rules="rules"
-                    label="Upload location"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="5" offset="md-2">
-                  <h4>Github Repository</h4>
-                  <v-text-field
-                    v-model="github"
-                    :rules="rules"
-                    label="Github location"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="5">
-                  <v-row>
+              <v-col class="col-sm-6">
+                <v-row>
+                  <v-col cols="12" sm="5">
+                    <h4>Cloud location</h4>
                     <v-text-field
-                      style="margin: 0 0 0 10px"
+                      v-model="cloud"
                       :rules="rules"
-                      v-model="newTask"
-                      placeholder="Technologies"
-                      v-on:keyup.enter="add"
+                      label="Upload location"
                     ></v-text-field>
-                    <v-btn
-                      style="margin: 15px"
-                      color="primary"
-                      @click="addTech"
+                  </v-col>
+                  <v-col cols="12" sm="5" offset="md-2">
+                    <h4>Github Repository</h4>
+                    <v-text-field
+                      v-model="github"
+                      :rules="rules"
+                      label="Github location"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="5">
+                    <v-row>
+                      <v-text-field
+                        style="margin: 0 0 0 10px"
+                        :rules="rules"
+                        v-model="newTask"
+                        placeholder="Technologies"
+                        v-on:keyup.enter="add"
+                      ></v-text-field>
+                      <v-btn
+                        style="margin: 15px"
+                        color="primary"
+                        @click="addTech"
+                      >
+                        Add
+                      </v-btn>
+                    </v-row>
+                    <v-card
+                      :rules="techCheck"
+                      style="margin: 10px; padding: 5px"
+                      class="list-group-items"
+                      v-for="element in techsUsed"
+                      :key="element.name"
                     >
-                      Add
-                    </v-btn>
-                  </v-row>
-                  <v-card
-                    :rules="techCheck"
-                    style="margin: 10px; padding: 5px"
-                    class="list-group-items"
-                    v-for="element in techsUsed"
-                    :key="element.name"
-                  >
-                    {{ element.name }}
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
+                      {{ element.name }}
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
 
-          <v-btn color="primary" @click="e1 = 4"> Continue </v-btn>
+            <v-btn
+              color="primary"
+              :disabled="!valid1"
+              @click="
+                e1 = 4;
+                validate;
+              "
+            >
+              Continue
+            </v-btn>
 
-          <v-btn text to="/"> Cancel </v-btn>
+            <v-btn text to="/"> Cancel </v-btn>
 
-          <v-btn color="primary" @click="e1 = 2"> Back </v-btn>
+            <v-btn color="primary" @click="e1 = 2"> Back </v-btn>
+          </v-form>
         </v-stepper-content>
 
         <v-stepper-content step="4">
           <v-card height="300px" flat>
-            <h2 style="text-align: center">Project id</h2>
+            <h2 style="text-align: center">Project: {{ project }}</h2>
             <div style="text-align: center">
-              <v-btn color="success" @click="createTasks">Create</v-btn>
+              <v-btn color="success" @click="createProject">Create</v-btn>
             </div>
           </v-card>
 
-          <v-btn color="primary" @click="e1 = 1"> Continue </v-btn>
+          <v-btn color="primary" @click="e1 = 1"> Page 1 </v-btn>
 
           <v-btn text to="/"> Cancel </v-btn>
 
-          <v-btn color="primary" @click="e1 = 3"> Back </v-btn>
+          <v-btn color="primary" @click="e1 = 3" right> Back </v-btn>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
@@ -365,6 +369,7 @@ export default {
     hour: null, // fix later
     stake: null,
     leader: null,
+    totalHours: null,
     p_members: [],
     newTask: null,
     selected: null,
@@ -376,17 +381,33 @@ export default {
     techsUsed: [],
     allMembers: [],
     user: null,
+    projectID: null,
     //rules start here
     valid: true,
+    valid1: true,
     name: "Rules",
     rules: [
       (v) => !!v || "Is required",
-      (v) => (v && v.length >= 5) || "Name must be above than 5 characters",
+      (v) => (v && v.length >= 3) || "Name must be above than 3 characters",
+    ],
+    dates: [
+      (v) => !!v || "Is required",
+      (v) => (v && v.length >= 3) || "Please pick a date",
+    ],
+    names: [
+      (v) => !!v || "Is required",
+      (v) => (v && v.length >= 2) || "Name must be above than 2 characters",
+    ],
+    members: [
+      (v) => !!v || "Is required",
+      (v) => (v && v.length >= 1) || "At least one member must be added",
     ],
     hours: [
       (v) => !!v || "Is required",
       (v) => (v && v.length <= 3) || "Must be below 3 digits",
     ],
+    tasks: [(v) => !!v || "Is required"],
+    // rules end here
     arrCheck: [(taskBacklog) => taskBacklog && taskBacklog.length >= 0],
     techCheck: [(techsUsed) => techsUsed && techsUsed.length >= 0],
     e1: 1,
@@ -457,9 +478,8 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
-              const newProject = response.data[0]._id;
-              this.addProjectToUser(newProject);
-                console.log("NP ", newProject)
+              this.projectID = response.data[0]._id;
+              this.addProjectToUser(this.projectID);
             } else {
               alert(
                 "Server returned " +
@@ -491,10 +511,7 @@ export default {
       )
         .then((response) => {
           if (response.ok) {
-          /*  this.$router.push({
-              name: "Home",
-              params: { text: "Project Created", snackbar: true },
-            });*/
+            this.createTasks();
             return response.json();
           } else {
             alert(
@@ -559,10 +576,10 @@ export default {
               status: response.status,
             }))
             .then((response) => {
-               this.taskDrop.push( response.data[0]._id);  // response.data[0]._id
-                console.log("TD resp data array 0", this.taskDrop)
+              this.bindTasks(response.data[0]._id);
+              //this.taskDrop.push(response.data[0]._id); // response.data[0]._id
               if (response.data) {
-               console.log("haha")
+                console.log("haha");
               } else {
                 alert(
                   "Server returned " +
@@ -574,9 +591,8 @@ export default {
             })
         );
       });
-
-      this.createProject();
     },
+
     getAllUsers() {
       fetch("https://rest-api-pwa.herokuapp.com/api/users/", {
         method: "GET",
@@ -602,7 +618,49 @@ export default {
           })
       );
     },
+
+    bindTasks(taskID) {
+      const arrayTask = this.taskDrop;
+      arrayTask.push(taskID);
+      this.taskDrop = arrayTask;
+      const requestOptions = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": this.token,
+        },
+        body: JSON.stringify({
+          tasks: arrayTask,
+        }),
+      };
+      fetch(
+        "https://rest-api-pwa.herokuapp.com/api/projects/" + this.projectID,
+        requestOptions
+      )
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            alert(
+              "Server returned " +
+                response.status +
+                " : " +
+                response.statusText,
+              (this.error = "Something went wrong")
+            );
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      this.$router.push({
+        name: "Home",
+        params: { text: "Project Created", snackbar: true },
+      });
+    },
+
     calc() {
+      this.totalHours = 0;
       this.p_members.forEach((element) => {
         this.totalHours = this.totalHours + element.weekHours;
       });

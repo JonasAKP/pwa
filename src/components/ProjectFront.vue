@@ -10,7 +10,7 @@
       <v-col md="3">
         <div>
           <v-card-title>Members:</v-card-title>
-          <v-card-subtitle>{{ membersNames.toString() }}</v-card-subtitle>
+          <v-card-subtitle>{{ membersNames.toString() }} </v-card-subtitle>
         </div>
       </v-col>
       <v-col md="3">
@@ -133,7 +133,8 @@ export default {
     },
 
     getMembers() {
-      this.membersIDs.forEach((memberID) => {
+      this.membersIDs.forEach((member) => {
+        const memberID = member._id;
         fetch("https://rest-api-pwa.herokuapp.com/api/users/" + memberID, {
           method: "GET",
           headers: { "auth-token": this.token },
