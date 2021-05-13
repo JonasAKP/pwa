@@ -58,7 +58,7 @@
           @click="dialog2 = true"
           >New task</v-btn
         >
-        <h3>Color meaning: Red= High priority, Yellow= Medium priority, Green= Low priority</h3>
+        <h3>Color meaning: <span style="color: #C62828">Red</span>= High priority, <span style="color: #F9A825">Yellow</span>= Medium priority, <span style="color: #43A047">Green</span>= Low priority</h3>
       </div>
     </div>
     <!-- backlog Card -->
