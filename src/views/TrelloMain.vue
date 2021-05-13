@@ -58,6 +58,7 @@
           @click="dialog2 = true"
           >New task</v-btn
         >
+        <h3>Color meaning: Red= High priority, Yellow= Medium priority, Green= Low priority</h3>
       </div>
     </div>
     <!-- backlog Card -->
@@ -71,10 +72,11 @@
           @change="backlogChange"
         >
           <v-card
-            style="margin: 10px; padding: 5px"
+            style="margin: 10px; padding: 10px; color: white; font-size: 25px; "
             class="list-group-items"
             v-for="element in arrBacklog"
             :key="element.name"
+            :color="priorityColor(element.priority)"
           >
             <div>
               {{ element.name }}
@@ -98,10 +100,11 @@
           @change="inProgressChange"
         >
           <v-card
-            style="margin: 10px; padding: 5px"
+            style="margin: 10px; padding: 10px; color: white; font-size: 25px;"
             class="list-group-items"
             v-for="element in arrInProgress"
             :key="element.name"
+            :color="priorityColor(element.priority)"
           >
             <div>
               {{ element.name }}
@@ -126,10 +129,11 @@
           @change="testedChange"
         >
           <v-card
-            style="margin: 10px; padding: 5px"
+            style="margin: 10px; padding: 10px; color: white; font-size: 25px;"
             class="list-group-items"
             v-for="element in arrTested"
             :key="element.name"
+            :color="priorityColor(element.priority)"
           >
             <div>
               {{ element.name }}
@@ -154,10 +158,11 @@
           @change="doneChange"
         >
           <v-card
-            style="margin: 10px; padding: 5px"
+            style="margin: 10px; padding: 10px; color: white; font-size: 25px;"
             class="list-group-items"
             v-for="element in arrDone"
             :key="element.name"
+            :color="priorityColor(element.priority)"
           >
             <div>
               {{ element.name }}
@@ -260,6 +265,15 @@ export default {
   },
 
   methods: {
+    priorityColor(priority) {
+      if (priority == 1) {
+        return "red darken-3";
+      } else if (priority == 2) {
+        return "yellow darken-3";
+      } else if (priority == 3) {
+        return "green darken-1";
+      }
+    },
     sortPriority() {
       this.arrBacklog.sort((a, b) => (a.priority > b.priority ? 1 : -1));
       this.arrInProgress.sort((a, b) => (a.priority > b.priority ? 1 : -1));
