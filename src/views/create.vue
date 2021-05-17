@@ -389,6 +389,9 @@ export default {
     rules: [
       (v) => !!v || "Is required",
       (v) => (v && v.length >= 3) || "Name must be above than 3 characters",
+      (v) =>
+        /^[a-zA-Z\u00c0-\u017e][a-zA-Z\u00c0-\u017e\s]*$/i.test(v) ||
+        "No special characters",
     ],
     dates: [
       (v) => !!v || "Is required",
@@ -397,6 +400,9 @@ export default {
     names: [
       (v) => !!v || "Is required",
       (v) => (v && v.length >= 2) || "Name must be above than 2 characters",
+      (v) =>
+        /^[a-zA-Z\u00c0-\u017e][a-zA-Z\u00c0-\u017e\s]*$/i.test(v) ||
+        "No special characters",
     ],
     members: [
       (v) => !!v || "Is required",
@@ -405,8 +411,15 @@ export default {
     hours: [
       (v) => !!v || "Is required",
       (v) => (v && v.length <= 3) || "Must be below 3 digits",
+      (v) => /^[0-9]*$/i.test(v) || "Only numbers",
     ],
-    tasks: [(v) => !!v || "Is required"],
+    tasks: [
+      (v) => !!v || "Is required",
+      (v) =>
+        /^[a-zA-Z\u00c0-\u017e][a-zA-Z\u00c0-\u017e\s]*$/i.test(v) ||
+        "No special characters",
+    ],
+
     // rules end here
     arrCheck: [(taskBacklog) => taskBacklog && taskBacklog.length >= 0],
     techCheck: [(techsUsed) => techsUsed && techsUsed.length >= 0],
@@ -443,7 +456,6 @@ export default {
     },
     createProject() {
       //const taskList = this.taskDrop;
-      console.log(this.taskDrop);
       const requestOptions = {
         method: "POST",
         headers: {
@@ -579,7 +591,7 @@ export default {
               this.bindTasks(response.data[0]._id);
               //this.taskDrop.push(response.data[0]._id); // response.data[0]._id
               if (response.data) {
-                console.log("haha");
+                console.log("task created");
               } else {
                 alert(
                   "Server returned " +
@@ -653,6 +665,50 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+        this.bindProjectToMembers()
+    },
+    bindProjectToMembers() {
+      console.log("list: " + this.p_members);
+      this.p_members.forEach((member) => {
+        console.log(member);
+        const arrayProjects = member.projects;
+        arrayProjects.push(this.projectID);
+        member.projects = arrayProjects;
+
+        console.log("array: " + member.projects)
+        console.log("id: " + member._id);
+        const requestOptions = {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": this.token,
+          },
+          body: JSON.stringify({
+            projects: member.projects,
+            password: this.user.password
+          }),
+        };
+        fetch(
+          "https://rest-api-pwa.herokuapp.com/api/users/" + member._id,
+          requestOptions
+        )
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              alert(
+                "Server returned " +
+                  response.status +
+                  " : " +
+                  response.statusText,
+                (this.error = "Something went wrong")
+              );
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
       this.$router.push({
         name: "Home",
         params: { text: "Project Created", snackbar: true },
