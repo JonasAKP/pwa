@@ -90,6 +90,9 @@
                 </v-btn>
               </div>
             </div>
+            <div>
+              <v-btn>Delete</v-btn>
+            </div>
           </v-card>
         </draggable>
       </v-card>
@@ -118,6 +121,9 @@
                   <!-- 2: edit onclick modal -->
                 </v-btn>
               </div>
+            </div>
+            <div>
+              <v-btn>Delete</v-btn>
             </div>
           </v-card>
         </draggable>
@@ -148,6 +154,9 @@
                 </v-btn>
               </div>
             </div>
+            <div>
+              <v-btn>Delete</v-btn>
+            </div>
           </v-card>
         </draggable>
       </v-card>
@@ -176,6 +185,9 @@
                   <!-- 2: edit onclick modal -->
                 </v-btn>
               </div>
+            </div>
+            <div>
+              <v-btn>Delete</v-btn>
             </div>
           </v-card>
         </draggable>
