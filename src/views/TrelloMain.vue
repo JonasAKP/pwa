@@ -281,6 +281,7 @@ export default {
   },
 
   methods: {
+    //method for color sorting for priority
     priorityColor(priority) {
       if (priority == 1) {
         return "red darken-3";
@@ -290,6 +291,7 @@ export default {
         return "green darken-1";
       }
     },
+    //setting up priority sorting method
     sortPriority() {
       this.arrBacklog.sort((a, b) => (a.priority > b.priority ? 1 : -1));
       this.arrInProgress.sort((a, b) => (a.priority > b.priority ? 1 : -1));
