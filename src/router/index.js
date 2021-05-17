@@ -3,8 +3,10 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import register from '../views/user/Register.vue'
 import login from '../views/user/Login.vue'
-import profile from '../views/user/Profile.vue'
 import create from '../views/create.vue'
+import TrelloMain from '../views/TrelloMain.vue'
+import profile from '../views/user/Profile.vue'
+
 
 Vue.use(VueRouter)
 
@@ -41,7 +43,12 @@ const routes = [
     path: '/Create',
     name: 'Create',
     component: create
-  }
+  },
+  {
+    path: '/TrelloMain',
+    name: 'TrelloMain',
+    component: TrelloMain
+  },
 ]
 
 const router = new VueRouter({
