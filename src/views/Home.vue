@@ -18,7 +18,7 @@
     <v-row>
       <v-col md="7">
         <div  v-for="project in this.user.projects" :key="project">
-          <ProjectFront :projectID="project" :token="token"></ProjectFront>
+          <ProjectFront :projectID="project" :token="token" :user="user"></ProjectFront>
         </div>
       </v-col>
       <v-col md="5">
