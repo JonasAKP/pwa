@@ -91,7 +91,11 @@
               </div>
             </div>
             <div>
-              <v-btn>Delete</v-btn>
+              <v-btn
+                @click="readyForDelete(element)"
+                @click.stop="dialog3 = true"
+                >Delete</v-btn
+              >
             </div>
           </v-card>
         </draggable>
@@ -123,7 +127,11 @@
               </div>
             </div>
             <div>
-              <v-btn>Delete</v-btn>
+              <v-btn
+                @click="readyForDelete(element)"
+                @click.stop="dialog3 = true"
+                >Delete</v-btn
+              >
             </div>
           </v-card>
         </draggable>
@@ -155,7 +163,11 @@
               </div>
             </div>
             <div>
-              <v-btn>Delete</v-btn>
+              <v-btn
+                @click="readyForDelete(element)"
+                @click.stop="dialog3 = true"
+                >Delete</v-btn
+              >
             </div>
           </v-card>
         </draggable>
@@ -187,7 +199,11 @@
               </div>
             </div>
             <div>
-              <v-btn>Delete</v-btn>
+              <v-btn
+                @click="readyForDelete(element)"
+                @click.stop="dialog3 = true"
+                >Delete</v-btn
+              >
             </div>
           </v-card>
         </draggable>
@@ -236,6 +252,41 @@
         </v-card>
       </v-dialog>
     </div>
+    <div>
+      <v-dialog v-model="dialog3" max-width="400">
+        <v-card>
+          <v-card-title class="headline grey lighten-2"
+            >Delete {{ item.name }}</v-card-title
+          >
+          <div class="pa-5">
+            <v-btn
+              style="margin: 5px"
+              color="green lighten-2"
+              @click="deleteTask(item)"
+              @click.stop="dialog3 = false"
+            >
+              Delete
+            </v-btn>
+            <v-btn
+              style="margin: 5px"
+              color="red lighten-1"
+              @click="dialog3 = false"
+            >
+              Cancel
+            </v-btn>
+          </div>
+        </v-card>
+      </v-dialog>
+    </div>
+    <v-snackbar v-model="snackbar">
+      {{ text }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -259,6 +310,7 @@ export default {
       updatedItem: "Tasks has been updated",
       dialog: false, // 3: edit - modal box
       dialog2: false,
+      dialog3: false,
       activeEditItem: null, // 5 storing id to use with edit
       item: [], // 4 : Edit add to store for edit data//
       item1: [],
@@ -267,6 +319,8 @@ export default {
       arrInProgress: [],
       arrTested: [],
       arrDone: [],
+      text: "",
+      snackbar: false,
     };
   },
 
@@ -281,6 +335,87 @@ export default {
   },
 
   methods: {
+    deleteTask(task) {
+      const requestOptions = {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": this.token,
+        },
+      };
+      fetch(
+        "https://rest-api-pwa.herokuapp.com/api/tasks/" + task._id,
+        requestOptions
+      )
+        .then((response) => {
+          if (response.ok) {
+            console.log("Project Deleted" + task._id);
+            this.removeTaskFromProject(task._id);
+
+            return response.json();
+          } else {
+            alert(
+              "Server returned " +
+                response.status +
+                " : " +
+                response.statusText,
+              (this.error = "Something went wrong")
+            );
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    removeTaskFromProject(taskID) {
+      const listOfTasks = this.project.tasks;
+      const index = listOfTasks.indexOf(taskID);
+      if (index != -1) {
+        listOfTasks.splice(index, 1);
+        const requestOptions = {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": this.token,
+          },
+          body: JSON.stringify({
+            tasks: listOfTasks,
+          }),
+        };
+        fetch(
+          "https://rest-api-pwa.herokuapp.com/api/projects/" + this.project._id,
+          requestOptions
+        )
+          .then((response) => {
+            if (response.ok) {
+              this.text = "Task succesfully deleted";
+              this.snackbar = true;
+              this.arrBacklog = [];
+              this.arrInProgress = [];
+              this.arrTested = [];
+              this.arrDone = [];
+              this.getTasks();
+              return response.json();
+            } else {
+              alert(
+                "Server returned " +
+                  response.status +
+                  " : " +
+                  response.statusText,
+                (this.error = "Something went wrong")
+              );
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    },
+    readyForDelete(item) {
+      this.item = item;
+      this.activeEditItem = item.id;
+    },
+
     //method for color sorting for priority
     priorityColor(priority) {
       if (priority == 1) {
@@ -359,6 +494,7 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
+              this.item1 = [];
               const taskID = response.data[0]._id;
               this.bindTaskToProject(taskID);
             } else {
@@ -394,7 +530,9 @@ export default {
           if (response.ok) {
             sessionStorage.setItem("project", JSON.stringify(this.project));
             this.dialog2 = false;
-            alert("Task added");
+            //  alert("Task added");
+            this.text = "Task added";
+            this.snackbar = true;
             this.arrBacklog = [];
             this.arrInProgress = [];
             this.arrTested = [];
