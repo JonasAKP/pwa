@@ -1,7 +1,9 @@
 <template>
   <v-container>
     <v-stepper v-model="e1">
+      <!-- Start of the stepper. Header component with the numbers in it  -->
       <v-stepper-header>
+        <!-- first page. the complete function adds the number to the page that is next to >  -->
         <v-stepper-step :complete="e1 > 1" step="1">
           Project Setup
         </v-stepper-step>
