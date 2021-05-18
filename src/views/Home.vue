@@ -17,8 +17,12 @@
     </v-btn>
     <v-row>
       <v-col md="7">
-        <div  v-for="project in this.user.projects" :key="project">
-          <ProjectFront :projectID="project" :token="token" :user="user"></ProjectFront>
+        <div v-for="project in this.sortedProjects" :key="project">
+          <ProjectFront
+            :projectID="project._id"
+            :token="token"
+            :user="user"
+          ></ProjectFront>
         </div>
       </v-col>
       <v-col md="5">
@@ -28,11 +32,12 @@
               <v-row style="padding-top: 10px">
                 <div style="padding-left: 15px">
                   <v-card-title id="title1" style="padding: 0"
-                    >Utilities</v-card-title
+                    >Search By Name</v-card-title
                   >
                   <v-text-field
                     class="searchField"
                     append-icon="mdi-magnify"
+                    v-model="searchField"
                   ></v-text-field>
                 </div>
               </v-row>
@@ -68,7 +73,7 @@
               </v-row>
             </v-col>
             <v-col md="2">
-              <v-btn to="/profile" text rounded color="yellow darken-2"  x-large
+              <v-btn to="/profile" text rounded color="yellow darken-2" x-large
                 ><v-icon>mdi-pencil </v-icon>
               </v-btn></v-col
             >
@@ -76,18 +81,11 @@
         </v-card>
       </v-col>
     </v-row>
-     <v-snackbar
-      v-model="snackbar"
-    >
+    <v-snackbar v-model="snackbar">
       {{ text }}
 
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="pink"
-          text
-          v-bind="attrs"
-          @click="snackbar = false"
-        >
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
           Close
         </v-btn>
       </template>
@@ -104,9 +102,12 @@ export default {
     token: null,
     userID: null,
     user: null,
-    radio:null,
-    text:null,
-    snackbar: false
+    radio: null,
+    searchField: "",
+    text: null,
+    snackbar: false,
+    fullProjects: [],
+    sortedProjects: [],
   }),
   components: {
     ProjectFront,
@@ -123,7 +124,88 @@ export default {
     this.snackbar = this.$route.params.snackbar;
   },
 
+  watch: {
+    searchField: function () {
+      this.sortedProjects = this.fullProjects.filter((project) => {
+        return project.name
+          .toLowerCase()
+          .includes(this.searchField.toLowerCase());
+      });
+    },
+
+    radio: function () {
+      console.log(this.sortedProjects);
+      if (this.radio == "name") {
+        this.sortedProjects.sort(function (a, b) {
+          var x = a.name.toLowerCase();
+          var y = b.name.toLowerCase();
+
+          if (x < y) {
+            return -1;
+          }
+          if (x > y) {
+            return 1;
+          }
+          console.log("øh2222?");
+          return 0;
+        });
+      } else if (this.radio == "date") {
+        this.sortedProjects.sort(function (a, b) {
+          var x = a.timeEnd.toLowerCase();
+          var y = b.timeEnd.toLowerCase();
+          if (x < y) {
+            return -1;
+          }
+          if (x > y) {
+            return 1;
+          }
+          return 0;
+        });
+      } else if (this.radio == "status") {
+        this.sortedProjects.sort(function (a, b) {
+          var x = a.status.toLowerCase();
+          var y = b.status.toLowerCase();
+          if (x < y) {
+            return -1;
+          }
+          if (x > y) {
+            return 1;
+          }
+          return 0;
+        });
+      }
+    },
+  },
   methods: {
+    getFullProjects() {
+      this.user.projects.forEach((projectID) => {
+        fetch("https://rest-api-pwa.herokuapp.com/api/projects/" + projectID, {
+          method: "GET",
+          headers: { "auth-token": this.token },
+        }).then((response) =>
+          response
+            .json()
+            .then((data) => ({
+              data: data,
+              status: response.status,
+            }))
+            .then((response) => {
+              if (response.data) {
+                const project = response.data;
+                this.fullProjects.push(project);
+                this.sortedProjects = this.fullProjects;
+              } else {
+                alert(
+                  "Server returned " +
+                    response.status +
+                    " : " +
+                    response.statusText
+                );
+              }
+            })
+        );
+      });
+    },
     getUser() {
       fetch("https://rest-api-pwa.herokuapp.com/api/users/" + this.userID, {
         method: "GET",
@@ -138,6 +220,7 @@ export default {
           .then((response) => {
             if (response.data) {
               this.user = response.data;
+              this.getFullProjects();
             } else {
               alert(
                 "Server returned " +

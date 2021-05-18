@@ -48,7 +48,7 @@
       </div>
 
       <v-spacer></v-spacer>
-      <v-btn elevation="0" outlined to="/Login" v-if="!userEmail && !userToken"
+      <v-btn elevation="0" outlined to="/Login" v-if="!userID && !userToken"
         >Login</v-btn
       >
     </v-app-bar>
@@ -64,7 +64,7 @@ export default {
 
   components: {},
 
-  data: () => ({ drawer: null, userEmail: null, userToken: null }),
+  data: () => ({ drawer: null, userID: null, userToken: null }),
   methods: {
     logout() {
       sessionStorage.clear();
@@ -75,7 +75,14 @@ export default {
     this.userID = sessionStorage.getItem("user_id");
     this.userToken = sessionStorage.getItem("user_token");
   },
-
+  watch: {
+    userToken :function () {
+      if(this.userToken != null && this.userToken != "")
+      {
+        console.log("Www?")
+      }
+    }
+  },
   
 };
 </script>

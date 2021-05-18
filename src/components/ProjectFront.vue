@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <v-card style="margin-top: 15px; padding: 5px">
       <v-row>
         <v-col cols="12" sm="2" md="2">
@@ -104,7 +105,7 @@
               >
                 Delete project
               </v-btn>
-              <v-btn color="primary" text @click="dialog = false">
+              <v-btn color="red" text @click="dialog = false">
                 cancel
               </v-btn>
             </v-card-actions>
@@ -136,6 +137,7 @@ export default {
     tasksObj: [],
     membersIDs: [],
     membersNames: [],
+    membersOnProject:[],
     valid: false,
     confirm: "",
     confirmRules: [(v) => !!v || " field is required"],
@@ -170,7 +172,7 @@ export default {
           .then((response) => {
             if (response.data) {
               this.project = response.data;
-
+              console.log("get Projects");
               /*   this.type = response.data.type;
               this.name = response.data.name;
               this.description = response.data.description;
@@ -221,6 +223,7 @@ export default {
             .then((response) => {
               if (response.data) {
                 this.membersNames.push(" " + response.data.name);
+                this.membersOnProject.push(response.data);
               } else {
                 alert(
                   "Server returned " +
@@ -284,7 +287,7 @@ export default {
     },
 
     deleteProjectFromAllUsers(project) {
-      const removeFrom = project.members;
+      const removeFrom = this.membersOnProject;
       removeFrom.push(this.user);
       console.log( removeFrom );
       removeFrom.forEach((member) => {
@@ -340,16 +343,15 @@ export default {
         },
       };
       fetch(
-        "https://rest-api-pwa.herokuapp.com/api/project/" + project._id,
+        "https://rest-api-pwa.herokuapp.com/api/projects/" + project._id,
         requestOptions
       )
         .then((response) => {
           if (response.ok) {
             console.log("Project Deleted" + project.name);
-            this.$router.push({
-              name: "Home",
-              params: { text: "Project has been Deleted", snackbar: true },
-            });
+            this.text = "Project has been Deleted";
+            this.snackbar = true;
+             
             return response.json();
           } else {
             alert(
@@ -365,6 +367,7 @@ export default {
           console.log(err);
         });
     },
+    
     getTasks() {
       this.taskIDs.forEach((taskID) => {
         fetch("https://rest-api-pwa.herokuapp.com/api/tasks/" + taskID, {
