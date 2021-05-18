@@ -186,15 +186,24 @@
 
         <v-stepper-content step="2">
           <!-- Content here -->
+
           <v-row>
             <v-col cols="12" md="5">
               <v-row style="margin: 0">
-                <v-text-field
-                  v-model="newTask"
-                  placeholder="Enter Task"
-                  v-on:keyup.enter="add"
-                ></v-text-field>
-                <v-btn style="margin: 15px" color="primary" @click="add">
+                <v-form v-model="isFormValid">
+                  <v-text-field
+                  style="width: 300px"
+                    v-model="newTask"
+                    :rules="tasks"
+                    placeholder="Enter Task"
+                  ></v-text-field>
+                </v-form>
+                <v-btn
+                  style="margin: 15px"
+                  color="primary"
+                  :disabled="!isFormValid"
+                  @click="add"
+                >
                   Add
                 </v-btn>
               </v-row>
@@ -222,6 +231,7 @@
             </v-col>
             <v-col> </v-col>
           </v-row>
+
           <!-- Content ends here -->
 
           <v-btn
@@ -270,34 +280,38 @@
                 <v-row> </v-row>
               </v-col>
 
-              <v-col class="col-sm-6">
+              <v-col>
                 <v-row>
-                  <v-col cols="12" sm="5">
-                    <h4>Cloud location</h4>
-                    <v-text-field
-                      v-model="cloud"
-                      :rules="rules"
-                      label="Upload location"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="5" offset="md-2">
-                    <h4>Github Repository</h4>
-                    <v-text-field
-                      v-model="github"
-                      :rules="rules"
-                      label="Github location"
-                    ></v-text-field>
-                  </v-col>
+                  <v-form v-model="isThreeValid">
+                    <v-col cols="12" sm="5">
+                      <h4>Cloud location</h4>
+                      <v-text-field
+                        v-model="cloud"
+                        :rules="rules"
+                        label="Upload location"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="5" offset="md-2">
+                      <h4>Github Repository</h4>
+                      <v-text-field
+                        v-model="github"
+                        :rules="rules"
+                        label="Github location"
+                      ></v-text-field>
+                    </v-col>
+                  </v-form>
                   <v-col cols="12" sm="5">
                     <v-row>
-                      <v-text-field
-                        style="margin: 0 0 0 10px"
-                        :rules="rules"
-                        v-model="newTask"
-                        placeholder="Technologies"
-                        v-on:keyup.enter="add"
-                      ></v-text-field>
+                      <v-form v-model="isTechValid">
+                        <v-text-field
+                          style="margin: 0 0 0 10px"
+                          :rules="tasks"
+                          v-model="newTask"
+                          placeholder="Technologies"
+                        ></v-text-field>
+                      </v-form>
                       <v-btn
+                        :disabled="!isTechValid"
                         style="margin: 15px"
                         color="primary"
                         @click="addTech"
@@ -321,7 +335,7 @@
 
             <v-btn
               color="primary"
-              :disabled="!valid1"
+              :disabled="!isThreeValid"
               @click="
                 e1 = 4;
                 validate;
@@ -385,14 +399,17 @@ export default {
     user: null,
     projectID: null,
     //rules start here
-    valid: true,
+    isFormValid: false,
+    isThreeValid: false,
+    isTechValid: false,
+    valid: false,
     valid1: true,
     name: "Rules",
     rules: [
       (v) => !!v || "Is required",
       (v) => (v && v.length >= 3) || "Name must be above than 3 characters",
       (v) =>
-        /^[a-zA-Z\u00c0-\u017e][a-zA-Z\u00c0-\u017e\s]*$/i.test(v) ||
+        /^[a-zA-Z0-9\u00c0-\u017e][a-zA-Z0-9\u00c0-\u017e\s]*$/i.test(v) ||
         "No special characters",
     ],
     dates: [
@@ -577,6 +594,7 @@ export default {
           body: JSON.stringify({
             name: Task.name,
             status: "Backlog",
+            priority: 1,
           }),
         };
         fetch(
@@ -591,6 +609,7 @@ export default {
             }))
             .then((response) => {
               this.bindTasks(response.data[0]._id);
+              
               //this.taskDrop.push(response.data[0]._id); // response.data[0]._id
               if (response.data) {
                 console.log("task created");
@@ -605,6 +624,7 @@ export default {
             })
         );
       });
+      this.bindProjectToMembers();
     },
 
     getAllUsers() {
@@ -667,7 +687,6 @@ export default {
         .catch((err) => {
           console.log(err);
         });
-        this.bindProjectToMembers()
     },
     bindProjectToMembers() {
       console.log("list: " + this.p_members);
@@ -677,7 +696,7 @@ export default {
         arrayProjects.push(this.projectID);
         member.projects = arrayProjects;
 
-        console.log("array: " + member.projects)
+        console.log("array: " + member.projects);
         console.log("id: " + member._id);
         const requestOptions = {
           method: "PUT",
@@ -687,7 +706,7 @@ export default {
           },
           body: JSON.stringify({
             projects: member.projects,
-            password: this.user.password
+            password: this.user.password,
           }),
         };
         fetch(
