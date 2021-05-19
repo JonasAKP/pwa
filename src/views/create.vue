@@ -26,6 +26,7 @@
       </v-stepper-header>
 
       <v-stepper-items>
+        <!-- Content of the first step starts here -->
         <v-stepper-content step="1">
           <v-form v-model="valid">
             <!-- <v-row>
@@ -46,6 +47,7 @@
 
                   <v-col cols="12" sm="6">
                     <v-text-field
+                      type="text"
                       v-model="project"
                       :rules="rules"
                       label="Project Name"
@@ -53,12 +55,13 @@
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
-                    <v-text-field
+                    <v-textarea
+                      type="text"
                       v-model="description"
                       :rules="rules"
                       label="Project Description"
                       required
-                    ></v-text-field>
+                    ></v-textarea>
                   </v-col>
                 </v-form>
               </v-col>
@@ -77,6 +80,7 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
+                        type="text"
                         :rules="dates"
                         v-model="startDate"
                         label="Start date"
@@ -103,6 +107,7 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
+                        type="text"
                         :rules="dates"
                         v-model="endDate"
                         label="End date"
@@ -133,6 +138,7 @@
 
                 <v-col cols="12" sm="6">
                   <v-text-field
+                    type="text"
                     v-model="stake"
                     :rules="names"
                     label="Stakeholder/partners"
@@ -144,6 +150,7 @@
                 <h2>Members</h2>
                 <v-col cols="12" sm="6">
                   <v-text-field
+                    type="text"
                     v-model="leader"
                     :rules="names"
                     label="Project Leader"
@@ -186,71 +193,72 @@
 
         <v-stepper-content step="2">
           <!-- Content here -->
-
-          <v-row>
-            <v-col cols="12" md="5">
-              <v-row style="margin: 0">
-                <v-form v-model="isFormValid">
+          <v-form v-model="isFormValid">
+            <v-row>
+              <v-col cols="12" md="5">
+                <v-row style="margin: 0">
                   <v-text-field
-                  style="width: 300px"
+                    @keydown.enter.prevent="add()"
+                    type="text"
                     v-model="newTask"
                     :rules="tasks"
                     placeholder="Enter Task"
                   ></v-text-field>
-                </v-form>
-                <v-btn
-                  style="margin: 15px"
-                  color="primary"
-                  :disabled="!isFormValid"
-                  @click="add"
-                >
-                  Add
-                </v-btn>
-              </v-row>
-              <v-row style="margin 0">
-                <v-card class="col-md-12" flat>
-                  <h3>Tasks</h3>
-                  <v-card
-                    style="margin: 10px; padding: 5px"
-                    class="list-group-items"
-                    v-for="(element, index) in taskBacklog"
-                    :key="index"
+
+                  <v-btn
+                    style="margin: 15px"
+                    color="primary"
+                    :disabled="!isFormValid"
+                    @click="add"
                   >
-                    {{ element.name }}
-                    <v-btn
-                      :right="true"
-                      :absolute="true"
-                      height="25px"
-                      text
-                      @click="removeA(index)"
-                      >X</v-btn
+                    Add
+                  </v-btn>
+                </v-row>
+                <v-row style="margin 0">
+                  <v-card class="col-md-12" flat>
+                    <h3>Tasks</h3>
+                    <v-card
+                      style="margin: 10px; padding: 5px"
+                      class="list-group-items"
+                      v-for="(element, index) in taskBacklog"
+                      :key="index"
                     >
+                      {{ element.name }}
+                      <v-btn
+                        :right="true"
+                        :absolute="true"
+                        height="25px"
+                        text
+                        @click="removeA(index)"
+                        >X</v-btn
+                      >
+                    </v-card>
                   </v-card>
-                </v-card>
-              </v-row>
-            </v-col>
-            <v-col> </v-col>
-          </v-row>
+                </v-row>
+              </v-col>
+              <v-col> </v-col>
+            </v-row>
 
-          <!-- Content ends here -->
+            <!-- Content ends here -->
 
-          <v-btn
-            color="primary"
-            @click="
-              calc();
-              e1 = 3;
-            "
-          >
-            Continue
-          </v-btn>
+            <v-btn
+              color="primary"
+              @click="
+                calc();
+                e1 = 3;
+              "
+            >
+              Continue
+            </v-btn>
 
-          <v-btn text to="/"> Cancel </v-btn>
+            <v-btn text to="/"> Cancel </v-btn>
 
-          <v-btn color="primary" @click="e1 = 1"> Back </v-btn>
+            <v-btn color="primary" @click="e1 = 1"> Back </v-btn>
+          </v-form>
         </v-stepper-content>
 
         <v-stepper-content step="3">
-          <v-form>
+          <v-form v-model="isThreeValid" v-on:submit.prevent>
             <v-row>
               <v-col class="col-sm-6">
                 <h4>Project Members</h4>
@@ -282,28 +290,35 @@
 
               <v-col>
                 <v-row>
-                  <v-form v-model="isThreeValid">
-                    <v-col cols="12" sm="5">
-                      <h4>Cloud location</h4>
-                      <v-text-field
-                        v-model="cloud"
-                        :rules="rules"
-                        label="Upload location"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="5" offset="md-2">
-                      <h4>Github Repository</h4>
-                      <v-text-field
-                        v-model="github"
-                        :rules="rules"
-                        label="Github location"
-                      ></v-text-field>
-                    </v-col>
-                  </v-form>
+                  <v-col cols="12" sm="5">
+                    <h4>Cloud location</h4>
+                    <v-text-field
+                      type="text"
+                      style="width: 200px"
+                      v-model="cloud"
+                      :rules="rules"
+                      label="Upload location"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="5" offset="md-2">
+                    <h4>Github Repository</h4>
+                    <v-text-field
+                      type="text"
+                      style="width: 200px"
+                      v-model="github"
+                      :rules="rules"
+                      label="Github location"
+                    ></v-text-field>
+                  </v-col>
                   <v-col cols="12" sm="5">
                     <v-row>
-                      <v-form v-model="isTechValid">
+                      <v-form
+                        v-model="isTechValid"
+                        @keydown.enter.prevent="addTech()"
+                      >
                         <v-text-field
+                          @keydown.enter.prevent="addTech()"
+                          type="text"
                           style="margin: 0 0 0 10px"
                           :rules="tasks"
                           v-model="newTask"
@@ -311,6 +326,7 @@
                         ></v-text-field>
                       </v-form>
                       <v-btn
+                        @keydown.enter.prevent="addTech()"
                         :disabled="!isTechValid"
                         style="margin: 15px"
                         color="primary"
@@ -320,7 +336,7 @@
                       </v-btn>
                     </v-row>
                     <v-card
-                      :rules="techCheck"
+                      @keydown.enter.prevent="addTech()"
                       style="margin: 10px; padding: 5px"
                       class="list-group-items"
                       v-for="element in techsUsed"
@@ -609,7 +625,7 @@ export default {
             }))
             .then((response) => {
               this.bindTasks(response.data[0]._id);
-              
+
               //this.taskDrop.push(response.data[0]._id); // response.data[0]._id
               if (response.data) {
                 console.log("task created");
