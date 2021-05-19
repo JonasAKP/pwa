@@ -6,6 +6,7 @@ import login from '../views/user/Login.vue'
 import create from '../views/create.vue'
 import TrelloMain from '../views/TrelloMain.vue'
 import profile from '../views/user/Profile.vue'
+import editProject from '../views/EditProject.vue'
 
 
 Vue.use(VueRouter)
@@ -48,6 +49,11 @@ const routes = [
     path: '/TrelloMain',
     name: 'TrelloMain',
     component: TrelloMain
+  }, 
+  {
+    path: '/EditProject',
+    name: 'EditProject',
+    component: editProject
   },
 ]
 

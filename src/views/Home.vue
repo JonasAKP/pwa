@@ -73,8 +73,8 @@
               </v-row>
             </v-col>
             <v-col md="2">
-              <v-btn to="/profile" text rounded color="yellow darken-2" x-large
-                ><v-icon>mdi-pencil </v-icon>
+              <v-btn to="/profile" text rounded color="yellow darken-2" 
+                ><v-icon x-large>mdi-pencil </v-icon>
               </v-btn></v-col
             >
           </v-row>

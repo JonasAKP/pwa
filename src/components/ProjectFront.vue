@@ -27,9 +27,14 @@
           }}</v-chip>
         </v-col>
 
-        <v-col md="2" class="center">
+        <v-col md="1" class="center">
           <v-btn text @click="setProject()"
             ><v-icon x-large>mdi-folder-search</v-icon></v-btn
+          >
+        </v-col>
+        <v-col md="1" class="center">
+          <v-btn text @click="editProject(project)" 
+            ><v-icon x-large color="yellow darken-2">mdi-pencil</v-icon></v-btn
           >
         </v-col>
         <v-col md="1" class="center">
@@ -205,6 +210,12 @@ export default {
     getItem(item) {
       this.item = item;
       this.activeEditItem = item.id;
+    },
+
+    editProject(item) {
+      this.item = item;
+      this.activeEditItem = item.id;
+      this.$router.push( {name:'EditProject', params: {project: item}});
     },
 
     getMembers() {
