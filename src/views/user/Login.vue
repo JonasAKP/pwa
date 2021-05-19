@@ -104,7 +104,7 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
-              console.log(response.data.token);
+              
               if (!response.data.token) {
                 alert("Email and Password does not match");
               } else {
@@ -117,7 +117,8 @@ export default {
                 const token = sessionStorage.getItem("user_token");
                 const userID = sessionStorage.getItem("user_id");
                 if (token != null && userID != null) {
-                  alert(this.email + " Has been logged in");
+                  alert(this.email + " Has been logged in");                 
+                  this.$emit('eventname', token)
                   this.$router.push( {name:'Home', params: {text: "You Been logged in as " + this.email, snackbar: true}});
                 } else {  
                   alert("Something went wrong");

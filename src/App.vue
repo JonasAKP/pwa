@@ -31,7 +31,7 @@
         elevation="0"
         outlined
         @click="logout()"
-        v-if="userID && userToken"
+        v-if="userToken"
         >Logout</v-btn
       >
     </v-navigation-drawer>
@@ -48,12 +48,10 @@
       </div>
 
       <v-spacer></v-spacer>
-      <v-btn elevation="0" outlined to="/Login" v-if="!userID && !userToken"
-        >Login</v-btn
-      >
+      <v-btn elevation="0" outlined to="/Login" v-if="!userToken">Login </v-btn>
     </v-app-bar>
     <v-main>
-      <router-view></router-view>
+      <router-view @eventname="updateToken"></router-view>
     </v-main>
   </v-app>
 </template>
@@ -67,22 +65,19 @@ export default {
   data: () => ({ drawer: null, userID: null, userToken: null }),
   methods: {
     logout() {
+      this.userID = null;
+      this.userToken = null;
       sessionStorage.clear();
+
       this.$router.push("Login");
+    },
+    updateToken(childToken) {
+      this.userToken = childToken;
     },
   },
   created() {
     this.userID = sessionStorage.getItem("user_id");
     this.userToken = sessionStorage.getItem("user_token");
   },
-  watch: {
-    userToken :function () {
-      if(this.userToken != null && this.userToken != "")
-      {
-        console.log("Www?")
-      }
-    }
-  },
-  
 };
 </script>
