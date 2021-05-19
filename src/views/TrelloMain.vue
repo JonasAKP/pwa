@@ -14,10 +14,10 @@
           <v-card>
             <div class="pa-5">
               <v-text-field v-model="item1.name" label="Name"></v-text-field>
-              <v-text-field
+              <v-textarea
                 v-model="item1.description"
                 label="Description"
-              ></v-text-field>
+              ></v-textarea>
               <v-text-field
                 v-model="item1.duration"
                 label="Allocated hours"
@@ -216,10 +216,10 @@
         <v-card>
           <div class="pa-5">
             <v-text-field v-model="item.name" label="Name"></v-text-field>
-            <v-text-field
+            <v-textarea
               v-model="item.description"
               label="Description"
-            ></v-text-field>
+            ></v-textarea>
             <v-text-field
               v-model="item.duration"
               label="Allocated hours"
