@@ -10,42 +10,37 @@
 
         <v-divider></v-divider>
 
+        <!-- Second page -->
         <v-stepper-step :complete="e1 > 2" step="2">
           Project Tasks
         </v-stepper-step>
 
         <v-divider></v-divider>
 
+        <!-- Third page -->
         <v-stepper-step :complete="e1 > 3" step="3">
           Management
         </v-stepper-step>
 
         <v-divider></v-divider>
 
+        <!-- Fourth page -->
         <v-stepper-step step="4"> Create </v-stepper-step>
       </v-stepper-header>
 
       <v-stepper-items>
         <!-- Content of the first step starts here -->
         <v-stepper-content step="1">
+          <!-- checks if all content rules are validated -->
           <v-form v-model="valid">
-            <!-- <v-row>
-              <v-col style="margin: 20px 0 20px 0">
-                <h2>Project type:</h2>
-                <v-radio-group v-model="radios" mandatory>
-                  <v-radio label="Rest API - MMD" value="radio-1"></v-radio>
-                  <v-radio label="Rest API - PBA" value="radio-2"></v-radio>
-                  <v-radio label="Empty Template" value="radio-3"></v-radio>
-                </v-radio-group>
-              </v-col>
-            </v-row> -->
 
-            <v-row style="">
+            <v-row>
               <v-col>
                 <v-form>
                   <h2>Project</h2>
 
                   <v-col cols="12" sm="6">
+                    <!-- normal text field. the rules are linked down below, but restricts what the field can do -->
                     <v-text-field
                       type="text"
                       v-model="project"
@@ -129,6 +124,7 @@
                     v-model="hour"
                     :rules="hours"
                     label="Total hours allocated"
+                    required
                   ></v-text-field>
                 </v-col>
               </v-col>
@@ -142,6 +138,7 @@
                     v-model="stake"
                     :rules="names"
                     label="Stakeholder/partners"
+                    required
                   ></v-text-field>
                 </v-col>
 
@@ -154,6 +151,7 @@
                     v-model="leader"
                     :rules="names"
                     label="Project Leader"
+                    required
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
@@ -181,7 +179,7 @@
               color="primary"
               @click="
                 e1 = 2;
-                validate;
+                
               "
             >
               Continue
@@ -354,7 +352,6 @@
               :disabled="!isThreeValid"
               @click="
                 e1 = 4;
-                validate;
               "
             >
               Continue
@@ -420,6 +417,7 @@ export default {
     isTechValid: false,
     valid: false,
     valid1: true,
+    // Validates v and checks if v is true. also checks if the length is true on most fields. there is also regular expressions that checks if the fields contains everything else then a-Z 0-9 and nordic characters
     name: "Rules",
     rules: [
       (v) => !!v || "Is required",
@@ -454,12 +452,10 @@ export default {
         /^[a-zA-Z\u00c0-\u017e][a-zA-Z\u00c0-\u017e\s]*$/i.test(v) ||
         "No special characters",
     ],
-
     // rules end here
-    arrCheck: [(taskBacklog) => taskBacklog && taskBacklog.length >= 0],
-    techCheck: [(techsUsed) => techsUsed && techsUsed.length >= 0],
     e1: 1,
   }),
+  //checks if the user is logged in. if not, redirected to login
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
@@ -471,26 +467,30 @@ export default {
     }
   },
   methods: {
-    validate() {
-      this.$refs.form.validate();
+
     },
-    add() {
+    // pushes data into an array called taskBacklog
+    add()  {
       if (this.newTask) {
         this.taskBacklog.push({ name: this.newTask });
         this.newTask = "";
+        // should have a regEx here
       }
+      
     },
+    // pushes into techsUsed
     addTech() {
       if (this.newTask) {
         this.techsUsed.push({ name: this.newTask });
         this.newTask = "";
       }
     },
+    // removes items from an array
     removeA(index) {
       this.taskBacklog.splice(index, 1);
     },
+    // creates project by taking the v-model data and arrays of the steps and pushes them into the db
     createProject() {
-      //const taskList = this.taskDrop;
       const requestOptions = {
         method: "POST",
         headers: {
@@ -538,6 +538,7 @@ export default {
           })
       );
     },
+    // binds the current project to a user and is used in createProject
     addProjectToUser(newProject) {
       const arrProject = this.user.projects;
       arrProject.push(newProject);
@@ -574,6 +575,7 @@ export default {
           console.log(err);
         });
     },
+    // gets the logged in user
     getUser() {
       fetch("https://rest-api-pwa.herokuapp.com/api/users/" + this.userID, {
         method: "GET",
@@ -599,6 +601,7 @@ export default {
           })
       );
     },
+    // takes our current task list array and pushes them individually to an db entry and gets and id back for each task, then executes bind project to members
     createTasks() {
       this.taskBacklog.forEach((Task) => {
         const requestOptions = {
@@ -626,7 +629,6 @@ export default {
             .then((response) => {
               this.bindTasks(response.data[0]._id);
 
-              //this.taskDrop.push(response.data[0]._id); // response.data[0]._id
               if (response.data) {
                 console.log("task created");
               } else {
@@ -643,6 +645,7 @@ export default {
       this.bindProjectToMembers();
     },
 
+    //gets all users current in the database. is used for a dropdown where you can pick between registered users
     getAllUsers() {
       fetch("https://rest-api-pwa.herokuapp.com/api/users/", {
         method: "GET",
@@ -668,7 +671,7 @@ export default {
           })
       );
     },
-
+    // binds task to project
     bindTasks(taskID) {
       const arrayTask = this.taskDrop;
       arrayTask.push(taskID);
@@ -704,16 +707,12 @@ export default {
           console.log(err);
         });
     },
+    // binds the project to the members selected
     bindProjectToMembers() {
-      console.log("list: " + this.p_members);
       this.p_members.forEach((member) => {
-        console.log(member);
         const arrayProjects = member.projects;
         arrayProjects.push(this.projectID);
         member.projects = arrayProjects;
-
-        console.log("array: " + member.projects);
-        console.log("id: " + member._id);
         const requestOptions = {
           method: "PUT",
           headers: {
@@ -752,12 +751,12 @@ export default {
       });
     },
 
+    // calculates the total ammount of hours available 
     calc() {
       this.totalHours = 0;
       this.p_members.forEach((element) => {
         this.totalHours = this.totalHours + element.weekHours;
       });
     },
-  },
-};
+  };
 </script>
