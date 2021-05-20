@@ -122,7 +122,6 @@
               <div class="text-end">
                 <v-btn @click="editItem(element)" @click.stop="dialog = true">
                   Edit
-                  <!-- 2: edit onclick modal -->
                 </v-btn>
               </div>
             </div>
@@ -298,6 +297,7 @@ export default {
   },
   data() {
     return {
+      
       arrPriority: [
         { text: "High", value: 1 },
         { text: "Medium", value: 2 },
@@ -323,7 +323,7 @@ export default {
       snackbar: false,
     };
   },
-
+  //getting the user token and ID for login
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
@@ -433,7 +433,7 @@ export default {
       this.arrTested.sort((a, b) => (a.priority > b.priority ? 1 : -1));
       this.arrDone.sort((a, b) => (a.priority > b.priority ? 1 : -1));
     },
-
+    //sorting tasks by priority
     backlogChange({ added }) {
       if (added) {
         added.element.status = "Backlog";
@@ -554,6 +554,7 @@ export default {
         });
     },
     getTasks() {
+      //fetching tasks from database
       this.project.tasks.forEach((taskID) => {
         fetch("https://rest-api-pwa.herokuapp.com/api/tasks/" + taskID, {
           method: "GET",
@@ -677,9 +678,6 @@ export default {
         });
     },
 
-    toggleInd(item) {
-      item.toggleIndividual = !item.toggleIndividual;
-    },
     add() {
       if (this.newTask) {
         this.arrBacklog.push({ name: this.newTask });
