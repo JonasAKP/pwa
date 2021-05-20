@@ -118,6 +118,7 @@ export default {
   }),
 
   methods: {
+    //validates user input and call registerUser()
     validate() {
       if (this.$refs.form.validate()) {
         if (this.password != this.cPassword) {
@@ -130,16 +131,7 @@ export default {
       }
     },
 
-    /*  getUser() {
-      fetch("http://localhost:4000/api/users")
-        .then((response) => response.json())
-        .then(
-          (data) => (
-            (this.totalVuePackages = data)
-          )
-        );
-    }, */
-
+    //POST user in Database.
     registerUser() {
       const requestOptions = {
         method: "POST",
@@ -154,7 +146,6 @@ export default {
         }),
       };
       fetch(
-        // "http://localhost:4000/api/users/register",
         "https://rest-api-pwa.herokuapp.com/api/users/register",
         requestOptions
       )

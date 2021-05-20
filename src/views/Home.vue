@@ -17,6 +17,7 @@
     </v-btn>
     <v-row>
       <v-col md="7">
+        <!-- creates a ProjectFront for each project on the user -->
         <div v-for="project in this.sortedProjects" :key="project">
           <ProjectFront
             :projectID="project._id"
@@ -106,12 +107,20 @@ export default {
     searchField: "",
     text: null,
     snackbar: false,
+
+    //array of all projects on the user
     fullProjects: [],
+
+    //array used to sort and searched on.
     sortedProjects: [],
   }),
   components: {
     ProjectFront,
   },
+
+  // run when page is created and check if the user are logged in.
+  // calls getUser()
+  /// sets snackbar and text
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
@@ -124,7 +133,11 @@ export default {
     this.snackbar = this.$route.params.snackbar;
   },
 
+  //watch: calls function if variable changed. 
   watch: {
+
+    //is called if the variable searchField is changed
+    //filter array of project after what written in searchField
     searchField: function () {
       this.sortedProjects = this.fullProjects.filter((project) => {
         return project.name
@@ -133,8 +146,11 @@ export default {
       });
     },
 
+     //is called if the variable radio is changed
+    //sort array after radio value.
     radio: function () {
-      console.log(this.sortedProjects);
+
+      //sort array after name
       if (this.radio == "name") {
         this.sortedProjects.sort(function (a, b) {
           var x = a.name.toLowerCase();
@@ -149,7 +165,9 @@ export default {
           console.log("øh2222?");
           return 0;
         });
-      } else if (this.radio == "date") {
+      } 
+      //sort array after date
+      else if (this.radio == "date") {
         this.sortedProjects.sort(function (a, b) {
           var x = a.timeEnd.toLowerCase();
           var y = b.timeEnd.toLowerCase();
@@ -161,7 +179,9 @@ export default {
           }
           return 0;
         });
-      } else if (this.radio == "status") {
+      } 
+      //sort array after status
+      else if (this.radio == "status") {
         this.sortedProjects.sort(function (a, b) {
           var x = a.status.toLowerCase();
           var y = b.status.toLowerCase();
@@ -177,6 +197,7 @@ export default {
     },
   },
   methods: {
+    //get array of projects on current user from database
     getFullProjects() {
       this.user.projects.forEach((projectID) => {
         fetch("https://rest-api-pwa.herokuapp.com/api/projects/" + projectID, {
@@ -193,6 +214,7 @@ export default {
               if (response.data) {
                 const project = response.data;
                 this.fullProjects.push(project);
+                //sets sortedProject as the fullProjects
                 this.sortedProjects = this.fullProjects;
               } else {
                 alert(
@@ -206,6 +228,8 @@ export default {
         );
       });
     },
+
+    //gets logged in user from database.
     getUser() {
       fetch("https://rest-api-pwa.herokuapp.com/api/users/" + this.userID, {
         method: "GET",

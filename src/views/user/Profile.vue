@@ -4,11 +4,7 @@
       <v-col cols="12">
         <v-card style="padding: 15px">
           <v-form ref="form" v-model="valid" lazy-validation>
-            <v-text-field
-              v-model="name"
-              label="Name"
-              disabled
-            ></v-text-field>
+            <v-text-field v-model="name" label="Name" disabled></v-text-field>
 
             <v-text-field
               v-model="email"
@@ -87,6 +83,8 @@ export default {
       (v) => (v && v.length >= 6) || "Password must be more than 6 characters",
     ],
   }),
+
+  // run when page is created and check if the user are logged in.
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
@@ -98,6 +96,7 @@ export default {
   },
 
   methods: {
+    //validate user inputs.
     validate() {
       if (this.$refs.form.validate()) {
         if (this.password != this.cPassword) {
@@ -107,7 +106,7 @@ export default {
         }
       }
     },
-
+    //gets the logged in user's name and email from the database.
     getUser() {
       fetch("https://rest-api-pwa.herokuapp.com/api/users/" + this.userID, {
         method: "GET",
@@ -135,29 +134,36 @@ export default {
       );
     },
 
+    //updates current user in database.
     updatePassword() {
       const requestOptions = {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-           "auth-token": this.token
+          "auth-token": this.token,
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           password: this.password,
         }),
       };
       fetch(
         "https://rest-api-pwa.herokuapp.com/api/users/" + this.userID,
         requestOptions
-      ).then((response) => {
+      )
+        .then((response) => {
           if (response.ok) {
-            
-             this.$router.push( {name:'Home', params: {text: "Password has been changed", snackbar: true}});
+            this.$router.push({
+              name: "Home",
+              params: { text: "Password has been changed", snackbar: true },
+            });
             return response.json();
           } else {
             alert(
-              "Server returned " + response.status + " : " + response.statusText,
-              this.error = "Something went wrong"
+              "Server returned " +
+                response.status +
+                " : " +
+                response.statusText,
+              (this.error = "Something went wrong")
             );
           }
         })

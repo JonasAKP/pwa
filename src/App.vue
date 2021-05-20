@@ -64,6 +64,9 @@ export default {
 
   data: () => ({ drawer: null, userID: null, userToken: null }),
   methods: {
+    //logout the current user.
+    //empty values and clear session
+    //Reroute to login page.
     logout() {
       this.userID = null;
       this.userToken = null;
@@ -71,10 +74,12 @@ export default {
 
       this.$router.push("Login");
     },
+    //updates usertoken with value from child compontent - Login.vue
     updateToken(childToken) {
       this.userToken = childToken;
     },
   },
+  // run when page is created and sets values userID and userToken from session.
   created() {
     this.userID = sessionStorage.getItem("user_id");
     this.userToken = sessionStorage.getItem("user_token");

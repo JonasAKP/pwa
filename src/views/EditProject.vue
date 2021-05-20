@@ -118,6 +118,10 @@ export default {
       items: ["Ongoing", "Done", "On Hold", "Cancelled"],
     };
   },
+
+  // run when page is created and check if the user are logged in.
+  //checks if user and token is set in session
+  // grabs data from other view and sets them
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
@@ -134,12 +138,13 @@ export default {
     }
   },
   methods: {
+    //validate user inputs
     validate() {
       if (this.$refs.form.validate()) {
         this.updateProject();
       }
     },
-
+    //Updates current project in Database
     updateProject() {
       const requestOptions = {
         method: "PUT",
