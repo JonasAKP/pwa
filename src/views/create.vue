@@ -661,7 +661,6 @@ export default {
           .then((response) => {
             if (response.data) {
               this.allMembers = response.data;
-              console.log(this.allMembers);
             } else {
               alert(
                 "Server returned " +
