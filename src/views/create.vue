@@ -294,7 +294,7 @@
                       type="text"
                       style="width: 200px"
                       v-model="cloud"
-                      :rules="rules"
+                      :rules="clouds"
                       label="Upload location"
                     ></v-text-field>
                   </v-col>
@@ -304,7 +304,7 @@
                       type="text"
                       style="width: 200px"
                       v-model="github"
-                      :rules="rules"
+                      :rules="clouds"
                       label="Github location"
                     ></v-text-field>
                   </v-col>
@@ -425,6 +425,10 @@ export default {
       (v) =>
         /^[a-zA-Z0-9\u00c0-\u017e][a-zA-Z0-9\u00c0-\u017e\s]*$/i.test(v) ||
         "No special characters",
+    ],
+    clouds: [
+      (v) => !!v || "Is required",
+      (v) => (v && v.length >= 3) || "Name must be above than 3 characters",
     ],
     dates: [
       (v) => !!v || "Is required",
