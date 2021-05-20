@@ -468,7 +468,7 @@ export default {
   },
   methods: {
 
-    },
+  
     // pushes data into an array called taskBacklog
     add()  {
       if (this.newTask) {
@@ -601,6 +601,7 @@ export default {
           })
       );
     },
+
     // takes our current task list array and pushes them individually to an db entry and gets and id back for each task, then executes bind project to members
     createTasks() {
       this.taskBacklog.forEach((Task) => {
@@ -660,6 +661,7 @@ export default {
           .then((response) => {
             if (response.data) {
               this.allMembers = response.data;
+              console.log(this.allMembers);
             } else {
               alert(
                 "Server returned " +
@@ -758,5 +760,7 @@ export default {
         this.totalHours = this.totalHours + element.weekHours;
       });
     },
-  };
+  }
+}
+
 </script>
