@@ -1,49 +1,48 @@
 <template>
   <v-container>
     <v-stepper v-model="e1">
+      <!-- Start of the stepper. Header component with the numbers in it  -->
       <v-stepper-header>
+        <!-- first page. the complete function adds the number to the page that is next to >  -->
         <v-stepper-step :complete="e1 > 1" step="1">
           Project Setup
         </v-stepper-step>
 
         <v-divider></v-divider>
 
+        <!-- Second page -->
         <v-stepper-step :complete="e1 > 2" step="2">
           Project Tasks
         </v-stepper-step>
 
         <v-divider></v-divider>
 
+        <!-- Third page -->
         <v-stepper-step :complete="e1 > 3" step="3">
           Management
         </v-stepper-step>
 
         <v-divider></v-divider>
 
+        <!-- Fourth page -->
         <v-stepper-step step="4"> Create </v-stepper-step>
       </v-stepper-header>
 
       <v-stepper-items>
+        <!-- Content of the first step starts here -->
         <v-stepper-content step="1">
+          <!-- checks if all content rules are validated -->
           <v-form v-model="valid">
-            <!-- <v-row>
-              <v-col style="margin: 20px 0 20px 0">
-                <h2>Project type:</h2>
-                <v-radio-group v-model="radios" mandatory>
-                  <v-radio label="Rest API - MMD" value="radio-1"></v-radio>
-                  <v-radio label="Rest API - PBA" value="radio-2"></v-radio>
-                  <v-radio label="Empty Template" value="radio-3"></v-radio>
-                </v-radio-group>
-              </v-col>
-            </v-row> -->
 
-            <v-row style="">
+            <v-row>
               <v-col>
                 <v-form>
                   <h2>Project</h2>
 
                   <v-col cols="12" sm="6">
+                    <!-- normal text field. the rules are linked down below, but restricts what the field can do -->
                     <v-text-field
+                      type="text"
                       v-model="project"
                       :rules="rules"
                       label="Project Name"
@@ -51,12 +50,13 @@
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6">
-                    <v-text-field
+                    <v-textarea
+                      type="text"
                       v-model="description"
                       :rules="rules"
                       label="Project Description"
                       required
-                    ></v-text-field>
+                    ></v-textarea>
                   </v-col>
                 </v-form>
               </v-col>
@@ -75,6 +75,7 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
+                        type="text"
                         :rules="dates"
                         v-model="startDate"
                         label="Start date"
@@ -101,6 +102,7 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
+                        type="text"
                         :rules="dates"
                         v-model="endDate"
                         label="End date"
@@ -122,6 +124,7 @@
                     v-model="hour"
                     :rules="hours"
                     label="Total hours allocated"
+                    required
                   ></v-text-field>
                 </v-col>
               </v-col>
@@ -131,9 +134,11 @@
 
                 <v-col cols="12" sm="6">
                   <v-text-field
+                    type="text"
                     v-model="stake"
                     :rules="names"
                     label="Stakeholder/partners"
+                    required
                   ></v-text-field>
                 </v-col>
 
@@ -142,9 +147,11 @@
                 <h2>Members</h2>
                 <v-col cols="12" sm="6">
                   <v-text-field
+                    type="text"
                     v-model="leader"
                     :rules="names"
                     label="Project Leader"
+                    required
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
@@ -172,7 +179,7 @@
               color="primary"
               @click="
                 e1 = 2;
-                validate;
+                
               "
             >
               Continue
@@ -184,61 +191,72 @@
 
         <v-stepper-content step="2">
           <!-- Content here -->
-          <v-row>
-            <v-col cols="12" md="5">
-              <v-row style="margin: 0">
-                <v-text-field
-                  v-model="newTask"
-                  placeholder="Enter Task"
-                  v-on:keyup.enter="add"
-                ></v-text-field>
-                <v-btn style="margin: 15px" color="primary" @click="add">
-                  Add
-                </v-btn>
-              </v-row>
-              <v-row style="margin 0">
-                <v-card class="col-md-12" flat>
-                  <h3>Tasks</h3>
-                  <v-card
-                    style="margin: 10px; padding: 5px"
-                    class="list-group-items"
-                    v-for="(element, index) in taskBacklog"
-                    :key="index"
+          <v-form v-model="isFormValid">
+            <v-row>
+              <v-col cols="12" md="5">
+                <v-row style="margin: 0">
+                  <v-text-field
+                    @keydown.enter.prevent="add()"
+                    type="text"
+                    v-model="newTask"
+                    :rules="tasks"
+                    placeholder="Enter Task"
+                  ></v-text-field>
+
+                  <v-btn
+                    style="margin: 15px"
+                    color="primary"
+                    :disabled="!isFormValid"
+                    @click="add"
                   >
-                    {{ element.name }}
-                    <v-btn
-                      :right="true"
-                      :absolute="true"
-                      height="25px"
-                      text
-                      @click="removeA(index)"
-                      >X</v-btn
+                    Add
+                  </v-btn>
+                </v-row>
+                <v-row style="margin 0">
+                  <v-card class="col-md-12" flat>
+                    <h3>Tasks</h3>
+                    <v-card
+                      style="margin: 10px; padding: 5px"
+                      class="list-group-items"
+                      v-for="(element, index) in taskBacklog"
+                      :key="index"
                     >
+                      {{ element.name }}
+                      <v-btn
+                        :right="true"
+                        :absolute="true"
+                        height="25px"
+                        text
+                        @click="removeA(index)"
+                        >X</v-btn
+                      >
+                    </v-card>
                   </v-card>
-                </v-card>
-              </v-row>
-            </v-col>
-            <v-col> </v-col>
-          </v-row>
-          <!-- Content ends here -->
+                </v-row>
+              </v-col>
+              <v-col> </v-col>
+            </v-row>
 
-          <v-btn
-            color="primary"
-            @click="
-              calc();
-              e1 = 3;
-            "
-          >
-            Continue
-          </v-btn>
+            <!-- Content ends here -->
 
-          <v-btn text to="/"> Cancel </v-btn>
+            <v-btn
+              color="primary"
+              @click="
+                calc();
+                e1 = 3;
+              "
+            >
+              Continue
+            </v-btn>
 
-          <v-btn color="primary" @click="e1 = 1"> Back </v-btn>
+            <v-btn text to="/"> Cancel </v-btn>
+
+            <v-btn color="primary" @click="e1 = 1"> Back </v-btn>
+          </v-form>
         </v-stepper-content>
 
         <v-stepper-content step="3">
-          <v-form>
+          <v-form v-model="isThreeValid" v-on:submit.prevent>
             <v-row>
               <v-col class="col-sm-6">
                 <h4>Project Members</h4>
@@ -268,11 +286,13 @@
                 <v-row> </v-row>
               </v-col>
 
-              <v-col class="col-sm-6">
+              <v-col>
                 <v-row>
                   <v-col cols="12" sm="5">
                     <h4>Cloud location</h4>
                     <v-text-field
+                      type="text"
+                      style="width: 200px"
                       v-model="cloud"
                       :rules="rules"
                       label="Upload location"
@@ -281,6 +301,8 @@
                   <v-col cols="12" sm="5" offset="md-2">
                     <h4>Github Repository</h4>
                     <v-text-field
+                      type="text"
+                      style="width: 200px"
                       v-model="github"
                       :rules="rules"
                       label="Github location"
@@ -288,14 +310,22 @@
                   </v-col>
                   <v-col cols="12" sm="5">
                     <v-row>
-                      <v-text-field
-                        style="margin: 0 0 0 10px"
-                        :rules="rules"
-                        v-model="newTask"
-                        placeholder="Technologies"
-                        v-on:keyup.enter="add"
-                      ></v-text-field>
+                      <v-form
+                        v-model="isTechValid"
+                        @keydown.enter.prevent="addTech()"
+                      >
+                        <v-text-field
+                          @keydown.enter.prevent="addTech()"
+                          type="text"
+                          style="margin: 0 0 0 10px"
+                          :rules="tasks"
+                          v-model="newTask"
+                          placeholder="Technologies"
+                        ></v-text-field>
+                      </v-form>
                       <v-btn
+                        @keydown.enter.prevent="addTech()"
+                        :disabled="!isTechValid"
                         style="margin: 15px"
                         color="primary"
                         @click="addTech"
@@ -304,7 +334,7 @@
                       </v-btn>
                     </v-row>
                     <v-card
-                      :rules="techCheck"
+                      @keydown.enter.prevent="addTech()"
                       style="margin: 10px; padding: 5px"
                       class="list-group-items"
                       v-for="element in techsUsed"
@@ -319,10 +349,9 @@
 
             <v-btn
               color="primary"
-              :disabled="!valid1"
+              :disabled="!isThreeValid"
               @click="
                 e1 = 4;
-                validate;
               "
             >
               Continue
@@ -383,14 +412,18 @@ export default {
     user: null,
     projectID: null,
     //rules start here
-    valid: true,
+    isFormValid: false,
+    isThreeValid: false,
+    isTechValid: false,
+    valid: false,
     valid1: true,
+    // Validates v and checks if v is true. also checks if the length is true on most fields. there is also regular expressions that checks if the fields contains everything else then a-Z 0-9 and nordic characters
     name: "Rules",
     rules: [
       (v) => !!v || "Is required",
       (v) => (v && v.length >= 3) || "Name must be above than 3 characters",
       (v) =>
-        /^[a-zA-Z\u00c0-\u017e][a-zA-Z\u00c0-\u017e\s]*$/i.test(v) ||
+        /^[a-zA-Z0-9\u00c0-\u017e][a-zA-Z0-9\u00c0-\u017e\s]*$/i.test(v) ||
         "No special characters",
     ],
     dates: [
@@ -419,12 +452,10 @@ export default {
         /^[a-zA-Z\u00c0-\u017e][a-zA-Z\u00c0-\u017e\s]*$/i.test(v) ||
         "No special characters",
     ],
-
     // rules end here
-    arrCheck: [(taskBacklog) => taskBacklog && taskBacklog.length >= 0],
-    techCheck: [(techsUsed) => techsUsed && techsUsed.length >= 0],
     e1: 1,
   }),
+  //checks if the user is logged in. if not, redirected to login
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
@@ -436,26 +467,30 @@ export default {
     }
   },
   methods: {
-    validate() {
-      this.$refs.form.validate();
+
     },
-    add() {
+    // pushes data into an array called taskBacklog
+    add()  {
       if (this.newTask) {
         this.taskBacklog.push({ name: this.newTask });
         this.newTask = "";
+        // should have a regEx here
       }
+      
     },
+    // pushes into techsUsed
     addTech() {
       if (this.newTask) {
         this.techsUsed.push({ name: this.newTask });
         this.newTask = "";
       }
     },
+    // removes items from an array
     removeA(index) {
       this.taskBacklog.splice(index, 1);
     },
+    // creates project by taking the v-model data and arrays of the steps and pushes them into the db
     createProject() {
-      //const taskList = this.taskDrop;
       const requestOptions = {
         method: "POST",
         headers: {
@@ -503,6 +538,7 @@ export default {
           })
       );
     },
+    // binds the current project to a user and is used in createProject
     addProjectToUser(newProject) {
       const arrProject = this.user.projects;
       arrProject.push(newProject);
@@ -539,6 +575,7 @@ export default {
           console.log(err);
         });
     },
+    // gets the logged in user
     getUser() {
       fetch("https://rest-api-pwa.herokuapp.com/api/users/" + this.userID, {
         method: "GET",
@@ -564,6 +601,7 @@ export default {
           })
       );
     },
+    // takes our current task list array and pushes them individually to an db entry and gets and id back for each task, then executes bind project to members
     createTasks() {
       this.taskBacklog.forEach((Task) => {
         const requestOptions = {
@@ -575,6 +613,7 @@ export default {
           body: JSON.stringify({
             name: Task.name,
             status: "Backlog",
+            priority: 1,
           }),
         };
         fetch(
@@ -589,7 +628,7 @@ export default {
             }))
             .then((response) => {
               this.bindTasks(response.data[0]._id);
-              //this.taskDrop.push(response.data[0]._id); // response.data[0]._id
+
               if (response.data) {
                 console.log("task created");
               } else {
@@ -603,8 +642,10 @@ export default {
             })
         );
       });
+      this.bindProjectToMembers();
     },
 
+    //gets all users current in the database. is used for a dropdown where you can pick between registered users
     getAllUsers() {
       fetch("https://rest-api-pwa.herokuapp.com/api/users/", {
         method: "GET",
@@ -630,7 +671,7 @@ export default {
           })
       );
     },
-
+    // binds task to project
     bindTasks(taskID) {
       const arrayTask = this.taskDrop;
       arrayTask.push(taskID);
@@ -665,18 +706,13 @@ export default {
         .catch((err) => {
           console.log(err);
         });
-        this.bindProjectToMembers()
     },
+    // binds the project to the members selected
     bindProjectToMembers() {
-      console.log("list: " + this.p_members);
       this.p_members.forEach((member) => {
-        console.log(member);
         const arrayProjects = member.projects;
         arrayProjects.push(this.projectID);
         member.projects = arrayProjects;
-
-        console.log("array: " + member.projects)
-        console.log("id: " + member._id);
         const requestOptions = {
           method: "PUT",
           headers: {
@@ -685,7 +721,7 @@ export default {
           },
           body: JSON.stringify({
             projects: member.projects,
-            password: this.user.password
+            password: this.user.password,
           }),
         };
         fetch(
@@ -715,12 +751,12 @@ export default {
       });
     },
 
+    // calculates the total ammount of hours available 
     calc() {
       this.totalHours = 0;
       this.p_members.forEach((element) => {
         this.totalHours = this.totalHours + element.weekHours;
       });
     },
-  },
-};
+  };
 </script>
