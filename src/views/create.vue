@@ -53,7 +53,7 @@
                     <v-textarea
                       type="text"
                       v-model="description"
-                      :rules="rules"
+                      :rules="descrules"
                       label="Project Description"
                       required
                     ></v-textarea>
@@ -388,7 +388,6 @@ export default {
   data: () => ({
     token: null,
     userID: null,
-    radios: null, // fix later
     project: null,
     description: null,
     startDate: null, // fix later
@@ -425,6 +424,10 @@ export default {
       (v) =>
         /^[a-zA-Z0-9\u00c0-\u017e][a-zA-Z0-9\u00c0-\u017e\s]*$/i.test(v) ||
         "No special characters",
+    ],
+    descrule: [
+      (v) => !!v || "Is required",
+      (v) => (v && v.length >= 3) || "Description must be above than 3 characters",
     ],
     clouds: [
       (v) => !!v || "Is required",
