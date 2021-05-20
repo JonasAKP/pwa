@@ -18,11 +18,12 @@
     <v-row>
       <v-col md="7">
         <!-- creates a ProjectFront for each project on the user -->
-        <div v-for="project in this.sortedProjects" :key="project">
+        <div v-for="project in this.sortedProjects" :key="project._id">
           <ProjectFront
             :projectID="project._id"
             :token="token"
             :user="user"
+            @deleted="updateAfterDelete"
           ></ProjectFront>
         </div>
       </v-col>
@@ -57,18 +58,18 @@
             <v-col md="4">
               <v-row>
                 <div>
-                  <v-card-title> {{ user.name }} </v-card-title>
+                  <v-card-title> {{ userName }} </v-card-title>
                   <v-card-subtitle>
-                    {{ user.email }}
+                    {{ userEmail }}
                   </v-card-subtitle>
                 </div>
               </v-row>
 
               <v-row>
                 <div class="mt-9 ml-5">
-                  <p>Weekly Hours: {{ user.weekHours }}</p>
+                  <p>Weekly Hours: {{ userWeekHour }}</p>
                   <v-progress-linear
-                    :value="user.weekHours"
+                    :value="userWeekHour"
                   ></v-progress-linear>
                 </div>
               </v-row>
@@ -98,7 +99,7 @@
 // @ is an alias to /src
 import ProjectFront from "../components/ProjectFront";
 export default {
-  name: "Home",
+  
   data: () => ({
     token: null,
     userID: null,
@@ -107,7 +108,9 @@ export default {
     searchField: "",
     text: null,
     snackbar: false,
-
+    userName: "",
+    userEmail:"",
+    userWeekHour: "",
     //array of all projects on the user
     fullProjects: [],
 
@@ -197,8 +200,18 @@ export default {
     },
   },
   methods: {
+    
+    updateAfterDelete()
+    {
+      
+      
+      this.getFullProjects();
+    },
     //get array of projects on current user from database
     getFullProjects() {
+      console.log("called?")
+      this.fullProjects = [];
+      this.sortedProjects = [];
       this.user.projects.forEach((projectID) => {
         fetch("https://rest-api-pwa.herokuapp.com/api/projects/" + projectID, {
           method: "GET",
@@ -244,6 +257,9 @@ export default {
           .then((response) => {
             if (response.data) {
               this.user = response.data;
+              this.userName = this.user.name;
+              this.userEmail = this.user.email;
+              this.userWeekHour = this.user.weekHours;
               this.getFullProjects();
             } else {
               alert(

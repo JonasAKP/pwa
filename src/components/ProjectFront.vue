@@ -2,13 +2,13 @@
   <div>
     <v-card style="margin-top: 15px; padding: 5px">
       <v-row>
-        <v-col cols="12" sm="2" md="2">
+        <v-col cols="12" sm="3" md="3">
           <div>
-            <v-card-title>{{ project.name }}</v-card-title>
-            <v-card-subtitle> {{ project.description }}</v-card-subtitle>
+            <v-card-title>{{ name }}</v-card-title>
+            <v-card-subtitle> {{ description }}</v-card-subtitle>
           </div>
         </v-col>
-        <v-col md="3">
+        <v-col md="2">
           <div>
             <v-card-title>Members:</v-card-title>
             <v-card-subtitle>{{ membersNames.toString() }} </v-card-subtitle>
@@ -17,12 +17,12 @@
         <v-col md="2">
           <div>
             <v-card-title>Due</v-card-title>
-            <v-card-subtitle>{{ project.timeEnd }}</v-card-subtitle>
+            <v-card-subtitle>{{ timeEnd }}</v-card-subtitle>
           </div>
         </v-col>
         <v-col md="2" class="center">
           <v-chip class="deep-purple accent-4 white--text" large>{{
-            project.status
+            status
           }}</v-chip>
         </v-col>
 
@@ -68,13 +68,13 @@
               </v-col>
               <v-col md="4">
                 <v-card-title>Hours Allocated</v-card-title>
-                <v-card-subtitle>{{ project.duration }}</v-card-subtitle>
+                <v-card-subtitle>{{ duration }}</v-card-subtitle>
               </v-col>
               <v-col md="4">
                 <v-card-title>Start Date</v-card-title>
-                <v-card-subtitle>{{ project.timeBegin }}</v-card-subtitle>
+                <v-card-subtitle>{{ timeBegin }}</v-card-subtitle>
                 <v-card-title>End Date</v-card-title>
-                <v-card-subtitle>{{ project.timeEnd }}</v-card-subtitle>
+                <v-card-subtitle>{{ timeEnd }}</v-card-subtitle>
               </v-col>
             </v-row>
           </v-expansion-panel-content>
@@ -87,11 +87,11 @@
       <v-dialog v-model="dialog" width="500">
         <v-card>
           <v-card-title class="headline grey lighten-2">
-            Delete {{ project.name }}
+            Delete {{ name }}
           </v-card-title>
           <v-form v-model="valid">
             <v-card-text class="mt-2">
-              are you sure you want to delete project: {{ project.name }}
+              are you sure you want to delete project: {{ name }}
               <v-text-field
                 v-model="confirm"
                 label="Write Name of Project to comfirm Delete"
@@ -127,7 +127,7 @@
   <script>
 export default {
   data: () => ({
-    /*  type: null,
+    type: null,
     name: null,
     description: null,
     duration: null,
@@ -135,8 +135,9 @@ export default {
     leader: null,
     timeBegin: null,
     timeEnd: null,
-    status: null, */
+    status: null,
     project: null,
+
     dialog: false,
     date: null,
     taskIDs: [],
@@ -184,8 +185,15 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
+              this.name = response.data.name;
+              this.description = response.data.description;
+              this.duration = response.data.duration;
+              this.stakeholder = response.data.stakeholder;
+              this.leader = response.data.leader;
+              this.timeBegin = response.data.timeBegin;
+              this.timeEnd = response.data.timeEnd;
+              this.status = response.data.status;
               this.project = response.data;
-              console.log("get Projects");
 
               this.date = response.data.date;
 
@@ -372,7 +380,8 @@ export default {
             console.log("Project Deleted" + project.name);
             this.text = "Project has been Deleted";
             this.snackbar = true;
-
+            //emit event tells parent(app) that token is set.
+            this.$emit("deleted");
             return response.json();
           } else {
             alert(

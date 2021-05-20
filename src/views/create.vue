@@ -53,7 +53,7 @@
                     <v-textarea
                       type="text"
                       v-model="description"
-                      :rules="descrules"
+                      :rules="descrule"
                       label="Project Description"
                       required
                     ></v-textarea>
@@ -294,7 +294,7 @@
                       type="text"
                       style="width: 200px"
                       v-model="cloud"
-                      :rules="clouds"
+                      :rules="rules"
                       label="Upload location"
                     ></v-text-field>
                   </v-col>
@@ -304,7 +304,7 @@
                       type="text"
                       style="width: 200px"
                       v-model="github"
-                      :rules="clouds"
+                      :rules="rules"
                       label="Github location"
                     ></v-text-field>
                   </v-col>
@@ -475,7 +475,7 @@ export default {
   },
   methods: {
 
-  
+    
     // pushes data into an array called taskBacklog
     add()  {
       if (this.newTask) {
@@ -556,7 +556,7 @@ export default {
           "auth-token": this.token,
         },
         body: JSON.stringify({
-          password: this.user.password,
+          
           projects: arrProject,
         }),
       };
@@ -608,7 +608,6 @@ export default {
           })
       );
     },
-
     // takes our current task list array and pushes them individually to an db entry and gets and id back for each task, then executes bind project to members
     createTasks() {
       this.taskBacklog.forEach((Task) => {
@@ -729,7 +728,7 @@ export default {
           },
           body: JSON.stringify({
             projects: member.projects,
-            password: this.user.password,
+          
           }),
         };
         fetch(
@@ -768,5 +767,4 @@ export default {
     },
   }
 }
-
 </script>
