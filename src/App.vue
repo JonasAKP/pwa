@@ -31,7 +31,7 @@
         elevation="0"
         outlined
         @click="logout()"
-        v-if="userID && userToken"
+        v-if="userToken"
         >Logout</v-btn
       >
     </v-navigation-drawer>
@@ -43,46 +43,43 @@
       elevate-on-scroll
     >
       <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-          @click.stop="drawer = !drawer"
-        />
-
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>Trello Clone</v-toolbar-title>
       </div>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-spacer></v-spacer>
-      <v-btn elevation="0" outlined to="/Login" v-if="!userEmail && !userToken">Login</v-btn>
+      <v-btn elevation="0" outlined to="/Login" v-if="!userToken">Login </v-btn>
     </v-app-bar>
     <v-main>
-      <router-view></router-view>
+      <router-view @eventname="updateToken"></router-view>
     </v-main>
   </v-app>
 </template>
 
 <script>
-
-
 export default {
   name: "App",
 
-  components: {
-   
-  },
+  components: {},
 
-  data: () => ({ drawer: null, userEmail: null, userToken: null }),
+  data: () => ({ drawer: null, userID: null, userToken: null }),
   methods: {
+    //logout the current user.
+    //empty values and clear session
+    //Reroute to login page.
     logout() {
+      this.userID = null;
+      this.userToken = null;
       sessionStorage.clear();
+
       this.$router.push("Login");
     },
+    //updates usertoken with value from child compontent - Login.vue
+    updateToken(childToken) {
+      this.userToken = childToken;
+    },
   },
+  // run when page is created and sets values userID and userToken from session.
   created() {
     this.userID = sessionStorage.getItem("user_id");
     this.userToken = sessionStorage.getItem("user_token");

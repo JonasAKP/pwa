@@ -37,7 +37,7 @@
 
               <v-btn to="/" color="error" class="mr-4"> Back </v-btn>
               <v-spacer></v-spacer>
-              <!-- {{ test }} -->
+             
               <v-btn to="/Register" class="mr-4">Register</v-btn>
             </v-row>
           </v-form>
@@ -52,7 +52,7 @@ export default {
   data: () => ({
     valid: true,
     show1: false,
-    // test: "",
+    
     email: "",
     emailRules: [
       (v) => !!v || "E-mail is required",
@@ -66,6 +66,8 @@ export default {
       (v) => (v && v.length <= 8) || "password is incorrect, please try again",
     ],
   }),
+
+  // run when page is created and check if the user are logged in.
   created() {
     this.token = sessionStorage.getItem("user_token");
     this.userID = sessionStorage.getItem("user_id");
@@ -74,13 +76,16 @@ export default {
     }
   },
 
+  
   methods: {
+    //validate user inputs.
     validate() {
       if (this.$refs.form.validate()) {
         this.loginUser();
       }
     },
 
+    //checks if username and password match a user from the database.
     loginUser() {
       const requestOptions = {
         method: "POST",
@@ -104,26 +109,27 @@ export default {
           }))
           .then((response) => {
             if (response.data) {
-              console.log(response.data.token);
+              
               if (!response.data.token) {
                 alert("Email and Password does not match");
               } else {
+                //sets logged in user and token in session.
                 sessionStorage.setItem(
                   "user_token",
                   response.data.token
-                  // console.log("getToken: " + response.data.token)
                 );
                 sessionStorage.setItem("user_id", response.data.userId);
                 const token = sessionStorage.getItem("user_token");
                 const userID = sessionStorage.getItem("user_id");
                 if (token != null && userID != null) {
                   alert(this.email + " Has been logged in");
-                  this.$router.push("/");
+                  //emit event tells parent(app) that token is set.                 
+                  this.$emit('eventname', token)
+                  this.$router.push( {name:'Home', params: {text: "You Been logged in as " + this.email, snackbar: true}});
                 } else {  
                   alert("Something went wrong");
                 }
               }
-              // this.test = "token: " + sessionStorage.getItem("user_token") + "\n" + "user :" + sessionStorage.getItem("user_email") ;
             } else {
               alert(
                 "Server returned " +
