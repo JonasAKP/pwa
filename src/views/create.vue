@@ -33,7 +33,6 @@
         <v-stepper-content step="1">
           <!-- checks if all content rules are validated -->
           <v-form v-model="valid">
-
             <v-row>
               <v-col>
                 <v-form>
@@ -174,14 +173,7 @@
               </v-col>
             </v-row>
 
-            <v-btn
-              :disabled="!valid"
-              color="primary"
-              @click="
-                e1 = 2;
-                
-              "
-            >
+            <v-btn :disabled="!valid" color="primary" @click="e1 = 2">
               Continue
             </v-btn>
 
@@ -310,10 +302,7 @@
                   </v-col>
                   <v-col cols="12" sm="5">
                     <v-row>
-                      <v-form
-                        v-model="isTechValid"
-                        @keydown.enter.prevent="addTech()"
-                      >
+                      <v-form v-model="isTechValid">
                         <v-text-field
                           @keydown.enter.prevent="addTech()"
                           type="text"
@@ -324,7 +313,6 @@
                         ></v-text-field>
                       </v-form>
                       <v-btn
-                        @keydown.enter.prevent="addTech()"
                         :disabled="!isTechValid"
                         style="margin: 15px"
                         color="primary"
@@ -334,7 +322,6 @@
                       </v-btn>
                     </v-row>
                     <v-card
-                      @keydown.enter.prevent="addTech()"
                       style="margin: 10px; padding: 5px"
                       class="list-group-items"
                       v-for="element in techsUsed"
@@ -347,13 +334,7 @@
               </v-col>
             </v-row>
 
-            <v-btn
-              color="primary"
-              :disabled="!isThreeValid"
-              @click="
-                e1 = 4;
-              "
-            >
+            <v-btn color="primary" :disabled="!isThreeValid" @click="e1 = 4">
               Continue
             </v-btn>
 
@@ -390,33 +371,33 @@ export default {
     userID: null,
     project: null,
     description: null,
-    startDate: null, // fix later
+    startDate: null,
     endDate: null,
     menu: false,
-    menu2: false, // fix later
-    hour: null, // fix later
+    menu2: false,
+    hour: null,
     stake: null,
     leader: null,
     totalHours: null,
-    p_members: [],
     newTask: null,
     selected: null,
     cloud: null,
     github: null,
+    user: null,
+    projectID: null,
     //array for keeping data
+    p_members: [],
     taskBacklog: [],
     taskDrop: [],
     techsUsed: [],
     allMembers: [],
-    user: null,
-    projectID: null,
     //rules start here
     isFormValid: false,
     isThreeValid: false,
     isTechValid: false,
     valid: false,
-    valid1: true,
-    // Validates v and checks if v is true. also checks if the length is true on most fields. there is also regular expressions that checks if the fields contains everything else then a-Z 0-9 and nordic characters
+    // Validates v and checks if v is true. also checks if the length is true on most fields. 
+    // There is also regular expressions that checks if the fields contains everything else then a-Z 0-9 and nordic characters
     name: "Rules",
     rules: [
       (v) => !!v || "Is required",
@@ -427,7 +408,8 @@ export default {
     ],
     descrule: [
       (v) => !!v || "Is required",
-      (v) => (v && v.length >= 3) || "Description must be above than 3 characters",
+      (v) =>
+        (v && v.length >= 3) || "Description must be above than 3 characters",
     ],
     clouds: [
       (v) => !!v || "Is required",
@@ -456,7 +438,7 @@ export default {
     tasks: [
       (v) => !!v || "Is required",
       (v) =>
-        /^[a-zA-Z\u00c0-\u017e][a-zA-Z\u00c0-\u017e\s]*$/i.test(v) ||
+        /^[a-zA-Z0-9\u00c0-\u017e][a-zA-Z0-9\u00c0-\u017e\s]*$/i.test(v) ||
         "No special characters",
     ],
     // rules end here
@@ -474,16 +456,12 @@ export default {
     }
   },
   methods: {
-
-    
     // pushes data into an array called taskBacklog
-    add()  {
+    add() {
       if (this.newTask) {
         this.taskBacklog.push({ name: this.newTask });
         this.newTask = "";
-        // should have a regEx here
       }
-      
     },
     // pushes into techsUsed
     addTech() {
@@ -556,7 +534,6 @@ export default {
           "auth-token": this.token,
         },
         body: JSON.stringify({
-          
           projects: arrProject,
         }),
       };
@@ -728,7 +705,6 @@ export default {
           },
           body: JSON.stringify({
             projects: member.projects,
-          
           }),
         };
         fetch(
@@ -758,13 +734,13 @@ export default {
       });
     },
 
-    // calculates the total ammount of hours available 
+    // calculates the total ammount of hours available
     calc() {
       this.totalHours = 0;
       this.p_members.forEach((element) => {
         this.totalHours = this.totalHours + element.weekHours;
       });
     },
-  }
-}
+  },
+};
 </script>

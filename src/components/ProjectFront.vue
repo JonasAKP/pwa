@@ -289,7 +289,7 @@ export default {
           )
             .then((response) => {
               if (response.ok) {
-                console.log(task + "task Deleted");
+
 
                 return response.json();
               } else {
@@ -320,10 +320,8 @@ export default {
       //for each user on array removes id from their projects array in database.
       removeFrom.forEach((member) => {
         const projectsMinusDeleted = member.projects;
-        console.log("projectID: " + this.project._id);
         const index = projectsMinusDeleted.indexOf(project._id);
         if (index != -1) {
-          console.log("index " + index);
           projectsMinusDeleted.splice(index, 1);
 
           const requestOptions = {
@@ -377,7 +375,6 @@ export default {
       )
         .then((response) => {
           if (response.ok) {
-            console.log("Project Deleted" + project.name);
             this.text = "Project has been Deleted";
             this.snackbar = true;
             //emit event tells parent(app) that token is set.

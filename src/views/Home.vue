@@ -165,7 +165,6 @@ export default {
           if (x > y) {
             return 1;
           }
-          console.log("øh2222?");
           return 0;
         });
       } 
@@ -209,7 +208,6 @@ export default {
     },
     //get array of projects on current user from database
     getFullProjects() {
-      console.log("called?")
       this.fullProjects = [];
       this.sortedProjects = [];
       this.user.projects.forEach((projectID) => {

@@ -6,22 +6,14 @@
       temporary
       src="https://images.photowall.com/products/44478/sunny-sky.jpg?"
     >
-      <v-btn min-width="256px" class="white--text" elevation="0" outlined to="/"
+      <v-btn min-width="256px" class="white--text" elevation="0" text to="/"
         >Home</v-btn
       >
       <v-btn
         min-width="256px"
         class="white--text"
         elevation="0"
-        outlined
-        to="/about"
-        >About</v-btn
-      >
-      <v-btn
-        min-width="256px"
-        class="white--text"
-        elevation="0"
-        outlined
+        text
         to="/create"
         >Create Project</v-btn
       >
@@ -29,7 +21,7 @@
         min-width="256px"
         class="white--text"
         elevation="0"
-        outlined
+        text
         @click="logout()"
         v-if="userToken"
         >Logout</v-btn
@@ -48,7 +40,7 @@
       </div>
 
       <v-spacer></v-spacer>
-      <v-btn elevation="0" outlined to="/Login" v-if="!userToken">Login </v-btn>
+      <v-btn elevation="0" text to="/Login" v-if="!userToken">Login </v-btn>
     </v-app-bar>
     <v-main>
       <router-view @eventname="updateToken"></router-view>

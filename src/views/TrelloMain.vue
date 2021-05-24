@@ -349,7 +349,6 @@ export default {
       )
         .then((response) => {
           if (response.ok) {
-            console.log("Project Deleted" + task._id);
             this.removeTaskFromProject(task._id);
 
             return response.json();
